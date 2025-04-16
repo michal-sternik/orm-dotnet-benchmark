@@ -1,0 +1,67 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 6 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// ***** Done, took 00:00:00 (0.08 sec)   *****
+// Found 6 benchmarks:
+//   SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.Dapper_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.Dapper_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.RepoDb_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.RepoDb_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 213200.00 ns, 21.3200 us/op
+WorkloadJitting  1: 10 op, 5794084500.00 ns, 579.4085 ms/op
+
+OverheadWarmup   1: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadWarmup   2: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadWarmup   3: 10 op, 3400.00 ns, 340.0000 ns/op
+OverheadWarmup   4: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadWarmup   5: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadWarmup   6: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadWarmup   7: 10 op, 2600.00 ns, 260.0000 ns/op
+OverheadWarmup   8: 10 op, 3900.00 ns, 390.0000 ns/op
+OverheadWarmup   9: 10 op, 2200.00 ns, 220.0000 ns/op
+
+OverheadActual   1: 10 op, 1700.00 ns, 170.0000 ns/op
+OverheadActual   2: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual   3: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadActual   4: 10 op, 3300.00 ns, 330.0000 ns/op
+OverheadActual   5: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadActual   6: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual   7: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   8: 10 op, 2700.00 ns, 270.0000 ns/op
+OverheadActual   9: 10 op, 2700.00 ns, 270.0000 ns/op
+OverheadActual  10: 10 op, 3300.00 ns, 330.0000 ns/op
+OverheadActual  11: 10 op, 2900.00 ns, 290.0000 ns/op
+OverheadActual  12: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual  13: 10 op, 1800.00 ns, 180.0000 ns/op
+OverheadActual  14: 10 op, 5800.00 ns, 580.0000 ns/op
+OverheadActual  15: 10 op, 2800.00 ns, 280.0000 ns/op
+OverheadActual  16: 10 op, 4800.00 ns, 480.0000 ns/op
+OverheadActual  17: 10 op, 1700.00 ns, 170.0000 ns/op
+OverheadActual  18: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual  19: 10 op, 2800.00 ns, 280.0000 ns/op
+OverheadActual  20: 10 op, 2000.00 ns, 200.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 2843978200.00 ns, 284.3978 ms/op
+WorkloadWarmup   2: 10 op, 2632566200.00 ns, 263.2566 ms/op
+WorkloadWarmup   3: 10 op, 2665472200.00 ns, 266.5472 ms/op
+WorkloadWarmup   4: 10 op, 2617632700.00 ns, 261.7633 ms/op
+WorkloadWarmup   5: 10 op, 2677702100.00 ns, 267.7702 ms/op
+
+WorkloadAct

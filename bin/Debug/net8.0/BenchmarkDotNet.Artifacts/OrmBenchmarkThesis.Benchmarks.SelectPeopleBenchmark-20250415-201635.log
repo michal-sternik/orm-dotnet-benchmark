@@ -1,0 +1,142 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 6 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// ***** Done, took 00:00:00 (0.04 sec)   *****
+// Found 6 benchmarks:
+//   SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.Dapper_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.Dapper_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.RepoDb_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.RepoDb_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 189700.00 ns, 18.9700 us/op
+WorkloadJitting  1: 10 op, 6449608300.00 ns, 644.9608 ms/op
+
+OverheadWarmup   1: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadWarmup   2: 10 op, 3700.00 ns, 370.0000 ns/op
+OverheadWarmup   3: 10 op, 3800.00 ns, 380.0000 ns/op
+OverheadWarmup   4: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadWarmup   5: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadWarmup   6: 10 op, 3000.00 ns, 300.0000 ns/op
+OverheadWarmup   7: 10 op, 3400.00 ns, 340.0000 ns/op
+OverheadWarmup   8: 10 op, 5000.00 ns, 500.0000 ns/op
+OverheadWarmup   9: 10 op, 3100.00 ns, 310.0000 ns/op
+
+OverheadActual   1: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadActual   2: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual   3: 10 op, 2700.00 ns, 270.0000 ns/op
+OverheadActual   4: 10 op, 3800.00 ns, 380.0000 ns/op
+OverheadActual   5: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual   6: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   7: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual   8: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadActual   9: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual  10: 10 op, 3100.00 ns, 310.0000 ns/op
+OverheadActual  11: 10 op, 4800.00 ns, 480.0000 ns/op
+OverheadActual  12: 10 op, 5500.00 ns, 550.0000 ns/op
+OverheadActual  13: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadActual  14: 10 op, 4100.00 ns, 410.0000 ns/op
+OverheadActual  15: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual  16: 10 op, 3700.00 ns, 370.0000 ns/op
+OverheadActual  17: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadActual  18: 10 op, 3700.00 ns, 370.0000 ns/op
+OverheadActual  19: 10 op, 3700.00 ns, 370.0000 ns/op
+OverheadActual  20: 10 op, 2700.00 ns, 270.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 2866453400.00 ns, 286.6453 ms/op
+WorkloadWarmup   2: 10 op, 2639003400.00 ns, 263.9003 ms/op
+WorkloadWarmup   3: 10 op, 2740823200.00 ns, 274.0823 ms/op
+WorkloadWarmup   4: 10 op, 2711790800.00 ns, 271.1791 ms/op
+WorkloadWarmup   5: 10 op, 2663320700.00 ns, 266.3321 ms/op
+
+WorkloadActual   1: 10 op, 2734525100.00 ns, 273.4525 ms/op
+WorkloadActual   2: 10 op, 2639609000.00 ns, 263.9609 ms/op
+WorkloadActual   3: 10 op, 2690671000.00 ns, 269.0671 ms/op
+WorkloadActual   4: 10 op, 2537941000.00 ns, 253.7941 ms/op
+WorkloadActual   5: 10 op, 2618132200.00 ns, 261.8132 ms/op
+WorkloadActual   6: 10 op, 2503581500.00 ns, 250.3582 ms/op
+WorkloadActual   7: 10 op, 2610820200.00 ns, 261.0820 ms/op
+WorkloadActual   8: 10 op, 2528918100.00 ns, 252.8918 ms/op
+WorkloadActual   9: 10 op, 2472431300.00 ns, 247.2431 ms/op
+WorkloadActual  10: 10 op, 2540953400.00 ns, 254.0953 ms/op
+
+WorkloadResult   1: 10 op, 2734522500.00 ns, 273.4523 ms/op
+WorkloadResult   2: 10 op, 2639606400.00 ns, 263.9606 ms/op
+WorkloadResult   3: 10 op, 2690668400.00 ns, 269.0668 ms/op
+WorkloadResult   4: 10 op, 2537938400.00 ns, 253.7938 ms/op
+WorkloadResult   5: 10 op, 2618129600.00 ns, 261.8130 ms/op
+WorkloadResult   6: 10 op, 2503578900.00 ns, 250.3579 ms/op
+WorkloadResult   7: 10 op, 2610817600.00 ns, 261.0818 ms/op
+WorkloadResult   8: 10 op, 2528915500.00 ns, 252.8916 ms/op
+WorkloadResult   9: 10 op, 2472428700.00 ns, 247.2429 ms/op
+WorkloadResult  10: 10 op, 2540950800.00 ns, 254.0951 ms/op
+// GC:  105 57 10 635859576 10
+// Threading:  0 0 10
+
+
+Mean = 258.776 ms, StdErr = 2.683 ms (1.04%), N = 10, StdDev = 8.485 ms
+Min = 247.243 ms, Q1 = 253.117 ms, Median = 257.588 ms, Q3 = 263.424 ms, Max = 273.452 ms
+IQR = 10.307 ms, LowerFence = 237.657 ms, UpperFence = 278.884 ms
+ConfidenceInterval = [245.948 ms; 271.604 ms] (CI 99.9%), Margin = 12.828 ms (4.96% of Mean)
+Skewness = 0.31, Kurtosis = 1.61, MValue = 2
+
+// ** Remained 5 (83,3%) benchmark(s) to run. Estimated finish 2025-04-15 20:21 (0h 4m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 1900.00 ns, 190.0000 ns/op
+WorkloadJitting  1: 10 op, 4317141500.00 ns, 431.7142 ms/op
+
+OverheadWarmup   1: 10 op, 2900.00 ns, 290.0000 ns/op
+OverheadWarmup   2: 10 op, 3200.00 ns, 320.0000 ns/op
+OverheadWarmup   3: 10 op, 3100.00 ns, 310.0000 ns/op
+OverheadWarmup   4: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadWarmup   5: 10 op, 2800.00 ns, 280.0000 ns/op
+OverheadWarmup   6: 10 op, 3200.00 ns, 320.0000 ns/op
+OverheadWarmup   7: 10 op, 2600.00 ns, 260.0000 ns/op
+
+OverheadActual   1: 10 op, 4800.00 ns, 480.0000 ns/op
+OverheadActual   2: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual   3: 10 op, 6500.00 ns, 650.0000 ns/op
+OverheadActual   4: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   5: 10 op, 4100.00 ns, 410.0000 ns/op
+OverheadActual   6: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   7: 10 op, 7400.00 ns, 740.0000 ns/op
+OverheadActual   8: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   9: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  10: 10 op, 1500.00 ns, 150.0000 ns/op
+OverheadActual  11: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  12: 10 op, 1500.00 ns, 150.0000 ns/op
+OverheadActual  13: 10 op, 1200.00 ns, 120.0000 ns/op
+OverheadActual  14: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual  15: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  16: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  17: 10 op, 1400.00 ns, 140.0000 ns/op
+OverheadActual  18: 10 op, 1400.00 ns, 140.0000 ns/op
+OverheadActual  19: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  20: 10 op, 1100.00 ns, 110

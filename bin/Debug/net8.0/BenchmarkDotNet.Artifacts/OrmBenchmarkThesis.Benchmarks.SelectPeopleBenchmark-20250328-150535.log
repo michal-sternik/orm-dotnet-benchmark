@@ -1,0 +1,25 @@
+// Validating benchmarks:
+// Benchmark SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=100]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=100]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.RawSql_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=100]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.RawSql_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=100]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=1000]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=1000]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.RawSql_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=1000]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+
+// Benchmark SelectPeopleBenchmark.RawSql_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=1000, IterationCount=10, LaunchCount=1, WarmupCount=5) [NumberOfRecords=1000]
+//    * Specified InvocationCount (1000) must be a multiple of UnrollFactor (16)
+

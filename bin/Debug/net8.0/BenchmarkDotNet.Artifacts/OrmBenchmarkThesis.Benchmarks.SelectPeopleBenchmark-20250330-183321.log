@@ -1,0 +1,444 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 4 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// ***** Done, took 00:00:00 (0.03 sec)   *****
+// Found 4 benchmarks:
+//   SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=100]
+//   SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=100]
+//   SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=1000]
+//   SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=1000]
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=100]
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 187600.00 ns, 18.7600 us/op
+WorkloadJitting  1: 10 op, 5279355400.00 ns, 527.9355 ms/op
+
+OverheadWarmup   1: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadWarmup   2: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadWarmup   3: 10 op, 3800.00 ns, 380.0000 ns/op
+OverheadWarmup   4: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadWarmup   5: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadWarmup   6: 10 op, 2900.00 ns, 290.0000 ns/op
+OverheadWarmup   7: 10 op, 2000.00 ns, 200.0000 ns/op
+
+OverheadActual   1: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   2: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual   3: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual   4: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual   5: 10 op, 1800.00 ns, 180.0000 ns/op
+OverheadActual   6: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual   7: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual   8: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   9: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual  10: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual  11: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual  12: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual  13: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual  14: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual  15: 10 op, 3600.00 ns, 360.0000 ns/op
+OverheadActual  16: 10 op, 4100.00 ns, 410.0000 ns/op
+OverheadActual  17: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadActual  18: 10 op, 1900.00 ns, 190.0000 ns/op
+OverheadActual  19: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual  20: 10 op, 1800.00 ns, 180.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 2493352900.00 ns, 249.3353 ms/op
+WorkloadWarmup   2: 10 op, 2406607800.00 ns, 240.6608 ms/op
+WorkloadWarmup   3: 10 op, 2433445400.00 ns, 243.3445 ms/op
+WorkloadWarmup   4: 10 op, 2383339400.00 ns, 238.3339 ms/op
+WorkloadWarmup   5: 10 op, 2343569100.00 ns, 234.3569 ms/op
+
+WorkloadActual   1: 10 op, 2422340700.00 ns, 242.2341 ms/op
+WorkloadActual   2: 10 op, 2378217700.00 ns, 237.8218 ms/op
+WorkloadActual   3: 10 op, 2379650900.00 ns, 237.9651 ms/op
+WorkloadActual   4: 10 op, 2358925400.00 ns, 235.8925 ms/op
+WorkloadActual   5: 10 op, 2317545000.00 ns, 231.7545 ms/op
+WorkloadActual   6: 10 op, 2411972700.00 ns, 241.1973 ms/op
+WorkloadActual   7: 10 op, 2376411700.00 ns, 237.6412 ms/op
+WorkloadActual   8: 10 op, 2326015000.00 ns, 232.6015 ms/op
+WorkloadActual   9: 10 op, 2354463600.00 ns, 235.4464 ms/op
+WorkloadActual  10: 10 op, 2342700600.00 ns, 234.2701 ms/op
+
+WorkloadResult   1: 10 op, 2422338500.00 ns, 242.2339 ms/op
+WorkloadResult   2: 10 op, 2378215500.00 ns, 237.8216 ms/op
+WorkloadResult   3: 10 op, 2379648700.00 ns, 237.9649 ms/op
+WorkloadResult   4: 10 op, 2358923200.00 ns, 235.8923 ms/op
+WorkloadResult   5: 10 op, 2317542800.00 ns, 231.7543 ms/op
+WorkloadResult   6: 10 op, 2411970500.00 ns, 241.1971 ms/op
+WorkloadResult   7: 10 op, 2376409500.00 ns, 237.6410 ms/op
+WorkloadResult   8: 10 op, 2326012800.00 ns, 232.6013 ms/op
+WorkloadResult   9: 10 op, 2354461400.00 ns, 235.4461 ms/op
+WorkloadResult  10: 10 op, 2342698400.00 ns, 234.2698 ms/op
+// GC:  105 58 10 635849040 10
+// Threading:  0 0 10
+
+
+Mean = 236.682 ms, StdErr = 1.075 ms (0.45%), N = 10, StdDev = 3.399 ms
+Min = 231.754 ms, Q1 = 234.564 ms, Median = 236.767 ms, Q3 = 237.929 ms, Max = 242.234 ms
+IQR = 3.365 ms, LowerFence = 229.516 ms, UpperFence = 242.977 ms
+ConfidenceInterval = [231.543 ms; 241.821 ms] (CI 99.9%), Margin = 5.139 ms (2.17% of Mean)
+Skewness = 0.16, Kurtosis = 1.7, MValue = 2
+
+// ** Remained 3 (75,0%) benchmark(s) to run. Estimated finish 2025-03-30 18:36 (0h 2m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=100]
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 2000.00 ns, 200.0000 ns/op
+WorkloadJitting  1: 10 op, 4009937100.00 ns, 400.9937 ms/op
+
+OverheadWarmup   1: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadWarmup   2: 10 op, 3000.00 ns, 300.0000 ns/op
+OverheadWarmup   3: 10 op, 2700.00 ns, 270.0000 ns/op
+OverheadWarmup   4: 10 op, 3100.00 ns, 310.0000 ns/op
+OverheadWarmup   5: 10 op, 3000.00 ns, 300.0000 ns/op
+
+OverheadActual   1: 10 op, 3600.00 ns, 360.0000 ns/op
+OverheadActual   2: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual   3: 10 op, 2600.00 ns, 260.0000 ns/op
+OverheadActual   4: 10 op, 2600.00 ns, 260.0000 ns/op
+OverheadActual   5: 10 op, 2500.00 ns, 250.0000 ns/op
+OverheadActual   6: 10 op, 2800.00 ns, 280.0000 ns/op
+OverheadActual   7: 10 op, 2900.00 ns, 290.0000 ns/op
+OverheadActual   8: 10 op, 3000.00 ns, 300.0000 ns/op
+OverheadActual   9: 10 op, 3900.00 ns, 390.0000 ns/op
+OverheadActual  10: 10 op, 2600.00 ns, 260.0000 ns/op
+OverheadActual  11: 10 op, 2600.00 ns, 260.0000 ns/op
+OverheadActual  12: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual  13: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  14: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  15: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  16: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  17: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  18: 10 op, 1400.00 ns, 140.0000 ns/op
+OverheadActual  19: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  20: 10 op, 1100.00 ns, 110.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 2614901100.00 ns, 261.4901 ms/op
+WorkloadWarmup   2: 10 op, 2541342900.00 ns, 254.1343 ms/op
+WorkloadWarmup   3: 10 op, 2540646100.00 ns, 254.0646 ms/op
+WorkloadWarmup   4: 10 op, 2602966200.00 ns, 260.2966 ms/op
+WorkloadWarmup   5: 10 op, 2570619000.00 ns, 257.0619 ms/op
+
+WorkloadActual   1: 10 op, 2544346600.00 ns, 254.4347 ms/op
+WorkloadActual   2: 10 op, 2673496900.00 ns, 267.3497 ms/op
+WorkloadActual   3: 10 op, 2570957000.00 ns, 257.0957 ms/op
+WorkloadActual   4: 10 op, 2552786500.00 ns, 255.2787 ms/op
+WorkloadActual   5: 10 op, 2579202100.00 ns, 257.9202 ms/op
+WorkloadActual   6: 10 op, 2573464000.00 ns, 257.3464 ms/op
+WorkloadActual   7: 10 op, 2584178100.00 ns, 258.4178 ms/op
+WorkloadActual   8: 10 op, 2641519600.00 ns, 264.1520 ms/op
+WorkloadActual   9: 10 op, 2541822200.00 ns, 254.1822 ms/op
+WorkloadActual  10: 10 op, 2577141500.00 ns, 257.7142 ms/op
+
+WorkloadResult   1: 10 op, 2544344150.00 ns, 254.4344 ms/op
+WorkloadResult   2: 10 op, 2570954550.00 ns, 257.0955 ms/op
+WorkloadResult   3: 10 op, 2552784050.00 ns, 255.2784 ms/op
+WorkloadResult   4: 10 op, 2579199650.00 ns, 257.9200 ms/op
+WorkloadResult   5: 10 op, 2573461550.00 ns, 257.3462 ms/op
+WorkloadResult   6: 10 op, 2584175650.00 ns, 258.4176 ms/op
+WorkloadResult   7: 10 op, 2541819750.00 ns, 254.1820 ms/op
+WorkloadResult   8: 10 op, 2577139050.00 ns, 257.7139 ms/op
+// GC:  103 55 8 636311680 10
+// Threading:  1 0 10
+
+
+Mean = 256.548 ms, StdErr = 0.588 ms (0.23%), N = 8, StdDev = 1.663 ms
+Min = 254.182 ms, Q1 = 255.067 ms, Median = 257.221 ms, Q3 = 257.765 ms, Max = 258.418 ms
+IQR = 2.698 ms, LowerFence = 251.020 ms, UpperFence = 261.812 ms
+ConfidenceInterval = [253.370 ms; 259.727 ms] (CI 99.9%), Margin = 3.179 ms (1.24% of Mean)
+Skewness = -0.36, Kurtosis = 1.18, MValue = 2
+
+// ** Remained 2 (50,0%) benchmark(s) to run. Estimated finish 2025-03-30 18:36 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=1000]
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 800.00 ns, 80.0000 ns/op
+WorkloadJitting  1: 10 op, 2437645200.00 ns, 243.7645 ms/op
+
+OverheadWarmup   1: 10 op, 1200.00 ns, 120.0000 ns/op
+OverheadWarmup   2: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadWarmup   3: 10 op, 1400.00 ns, 140.0000 ns/op
+OverheadWarmup   4: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadWarmup   5: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadWarmup   6: 10 op, 1000.00 ns, 100.0000 ns/op
+
+OverheadActual   1: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   2: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual   3: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   4: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   5: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual   6: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   7: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   8: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual   9: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  10: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  11: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  12: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  13: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual  14: 10 op, 1200.00 ns, 120.0000 ns/op
+OverheadActual  15: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  16: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  17: 10 op, 1400.00 ns, 140.0000 ns/op
+OverheadActual  18: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  19: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  20: 10 op, 1100.00 ns, 110.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 2418969100.00 ns, 241.8969 ms/op
+WorkloadWarmup   2: 10 op, 2381923500.00 ns, 238.1924 ms/op
+WorkloadWarmup   3: 10 op, 2382927800.00 ns, 238.2928 ms/op
+WorkloadWarmup   4: 10 op, 2346390800.00 ns, 234.6391 ms/op
+WorkloadWarmup   5: 10 op, 2364472500.00 ns, 236.4473 ms/op
+
+WorkloadActual   1: 10 op, 2346288100.00 ns, 234.6288 ms/op
+WorkloadActual   2: 10 op, 2378066400.00 ns, 237.8066 ms/op
+WorkloadActual   3: 10 op, 2367083100.00 ns, 236.7083 ms/op
+WorkloadActual   4: 10 op, 2398168100.00 ns, 239.8168 ms/op
+WorkloadActual   5: 10 op, 2426970500.00 ns, 242.6971 ms/op
+WorkloadActual   6: 10 op, 2401719100.00 ns, 240.1719 ms/op
+WorkloadActual   7: 10 op, 2411163800.00 ns, 241.1164 ms/op
+WorkloadActual   8: 10 op, 2380353000.00 ns, 238.0353 ms/op
+WorkloadActual   9: 10 op, 2394601000.00 ns, 239.4601 ms/op
+WorkloadActual  10: 10 op, 2402437100.00 ns, 240.2437 ms/op
+
+WorkloadResult   1: 10 op, 2346287000.00 ns, 234.6287 ms/op
+WorkloadResult   2: 10 op, 2378065300.00 ns, 237.8065 ms/op
+WorkloadResult   3: 10 op, 2367082000.00 ns, 236.7082 ms/op
+WorkloadResult   4: 10 op, 2398167000.00 ns, 239.8167 ms/op
+WorkloadResult   5: 10 op, 2426969400.00 ns, 242.6969 ms/op
+WorkloadResult   6: 10 op, 2401718000.00 ns, 240.1718 ms/op
+WorkloadResult   7: 10 op, 2411162700.00 ns, 241.1163 ms/op
+WorkloadResult   8: 10 op, 2380351900.00 ns, 238.0352 ms/op
+WorkloadResult   9: 10 op, 2394599900.00 ns, 239.4600 ms/op
+WorkloadResult  10: 10 op, 2402436000.00 ns, 240.2436 ms/op
+// GC:  103 55 8 635879016 10
+// Threading:  0 0 10
+
+
+Mean = 239.068 ms, StdErr = 0.735 ms (0.31%), N = 10, StdDev = 2.324 ms
+Min = 234.629 ms, Q1 = 237.864 ms, Median = 239.638 ms, Q3 = 240.226 ms, Max = 242.697 ms
+IQR = 2.362 ms, LowerFence = 234.321 ms, UpperFence = 243.769 ms
+ConfidenceInterval = [235.555 ms; 242.582 ms] (CI 99.9%), Margin = 3.514 ms (1.47% of Mean)
+Skewness = -0.35, Kurtosis = 2.12, MValue = 2
+
+// ** Remained 1 (25,0%) benchmark(s) to run. Estimated finish 2025-03-30 18:36 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=1000]
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 1200.00 ns, 120.0000 ns/op
+WorkloadJitting  1: 10 op, 2794326200.00 ns, 279.4326 ms/op
+
+OverheadWarmup   1: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadWarmup   2: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadWarmup   3: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadWarmup   4: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadWarmup   5: 10 op, 1100.00 ns, 110.0000 ns/op
+
+OverheadActual   1: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual   2: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual   3: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual   4: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   5: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual   6: 10 op, 1700.00 ns, 170.0000 ns/op
+OverheadActual   7: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual   8: 10 op, 900.00 ns, 90.0000 ns/op
+OverheadActual   9: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  10: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual  11: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual  12: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  13: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  14: 10 op, 900.00 ns, 90.0000 ns/op
+OverheadActual  15: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  16: 10 op, 1300.00 ns, 130.0000 ns/op
+OverheadActual  17: 10 op, 1000.00 ns, 100.0000 ns/op
+OverheadActual  18: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  19: 10 op, 1100.00 ns, 110.0000 ns/op
+OverheadActual  20: 10 op, 1000.00 ns, 100.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 2653866800.00 ns, 265.3867 ms/op
+WorkloadWarmup   2: 10 op, 2624410800.00 ns, 262.4411 ms/op
+WorkloadWarmup   3: 10 op, 2590845600.00 ns, 259.0846 ms/op
+WorkloadWarmup   4: 10 op, 2579961000.00 ns, 257.9961 ms/op
+WorkloadWarmup   5: 10 op, 2612176300.00 ns, 261.2176 ms/op
+
+WorkloadActual   1: 10 op, 2515818500.00 ns, 251.5819 ms/op
+WorkloadActual   2: 10 op, 2564779200.00 ns, 256.4779 ms/op
+WorkloadActual   3: 10 op, 2559035400.00 ns, 255.9035 ms/op
+WorkloadActual   4: 10 op, 2545600200.00 ns, 254.5600 ms/op
+WorkloadActual   5: 10 op, 2542629000.00 ns, 254.2629 ms/op
+WorkloadActual   6: 10 op, 2492248800.00 ns, 249.2249 ms/op
+WorkloadActual   7: 10 op, 2540303400.00 ns, 254.0303 ms/op
+WorkloadActual   8: 10 op, 2510255200.00 ns, 251.0255 ms/op
+WorkloadActual   9: 10 op, 2534996100.00 ns, 253.4996 ms/op
+WorkloadActual  10: 10 op, 2507701400.00 ns, 250.7701 ms/op
+
+WorkloadResult   1: 10 op, 2515817400.00 ns, 251.5817 ms/op
+WorkloadResult   2: 10 op, 2564778100.00 ns, 256.4778 ms/op
+WorkloadResult   3: 10 op, 2559034300.00 ns, 255.9034 ms/op
+WorkloadResult   4: 10 op, 2545599100.00 ns, 254.5599 ms/op
+WorkloadResult   5: 10 op, 2542627900.00 ns, 254.2628 ms/op
+WorkloadResult   6: 10 op, 2492247700.00 ns, 249.2248 ms/op
+WorkloadResult   7: 10 op, 2540302300.00 ns, 254.0302 ms/op
+WorkloadResult   8: 10 op, 2510254100.00 ns, 251.0254 ms/op
+WorkloadResult   9: 10 op, 2534995000.00 ns, 253.4995 ms/op
+WorkloadResult  10: 10 op, 2507700300.00 ns, 250.7700 ms/op
+// GC:  103 55 8 636350440 10
+// Threading:  1 0 10
+
+
+Mean = 253.134 ms, StdErr = 0.751 ms (0.30%), N = 10, StdDev = 2.376 ms
+Min = 249.225 ms, Q1 = 251.164 ms, Median = 253.765 ms, Q3 = 254.486 ms, Max = 256.478 ms
+IQR = 3.321 ms, LowerFence = 246.183 ms, UpperFence = 259.467 ms
+ConfidenceInterval = [249.541 ms; 256.726 ms] (CI 99.9%), Margin = 3.593 ms (1.42% of Mean)
+Skewness = -0.17, Kurtosis = 1.51, MValue = 2
+
+// ** Remained 0 (0,0%) benchmark(s) to run. Estimated finish 2025-03-30 18:36 (0h 0m from now) **
+Successfully reverted power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-report.csv
+  BenchmarkDotNet.Artifacts\results\OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-report-github.md
+  BenchmarkDotNet.Artifacts\results\OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-report.html
+  BenchmarkDotNet.Artifacts\results\OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-report-default.md
+  BenchmarkDotNet.Artifacts\results\OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-measurements.csv
+
+// * Detailed results *
+SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=100]
+Runtime = ; GC = 
+Mean = 236.682 ms, StdErr = 1.075 ms (0.45%), N = 10, StdDev = 3.399 ms
+Min = 231.754 ms, Q1 = 234.564 ms, Median = 236.767 ms, Q3 = 237.929 ms, Max = 242.234 ms
+IQR = 3.365 ms, LowerFence = 229.516 ms, UpperFence = 242.977 ms
+ConfidenceInterval = [231.543 ms; 241.821 ms] (CI 99.9%), Margin = 5.139 ms (2.17% of Mean)
+Skewness = 0.16, Kurtosis = 1.7, MValue = 2
+-------------------- Histogram --------------------
+[229.684 ms ; 238.479 ms) | @@@@@@@@
+[238.479 ms ; 244.305 ms) | @@
+---------------------------------------------------
+
+SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=100]
+Runtime = ; GC = 
+Mean = 256.548 ms, StdErr = 0.588 ms (0.23%), N = 8, StdDev = 1.663 ms
+Min = 254.182 ms, Q1 = 255.067 ms, Median = 257.221 ms, Q3 = 257.765 ms, Max = 258.418 ms
+IQR = 2.698 ms, LowerFence = 251.020 ms, UpperFence = 261.812 ms
+ConfidenceInterval = [253.370 ms; 259.727 ms] (CI 99.9%), Margin = 3.179 ms (1.24% of Mean)
+Skewness = -0.36, Kurtosis = 1.18, MValue = 2
+-------------------- Histogram --------------------
+[253.091 ms ; 259.509 ms) | @@@@@@@@
+---------------------------------------------------
+
+SelectPeopleBenchmark.EFCore_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=1000]
+Runtime = ; GC = 
+Mean = 239.068 ms, StdErr = 0.735 ms (0.31%), N = 10, StdDev = 2.324 ms
+Min = 234.629 ms, Q1 = 237.864 ms, Median = 239.638 ms, Q3 = 240.226 ms, Max = 242.697 ms
+IQR = 2.362 ms, LowerFence = 234.321 ms, UpperFence = 243.769 ms
+ConfidenceInterval = [235.555 ms; 242.582 ms] (CI 99.9%), Margin = 3.514 ms (1.47% of Mean)
+Skewness = -0.35, Kurtosis = 2.12, MValue = 2
+-------------------- Histogram --------------------
+[233.213 ms ; 244.113 ms) | @@@@@@@@@@
+---------------------------------------------------
+
+SelectPeopleBenchmark.EFCore_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5) [NumberOfRecords=1000]
+Runtime = ; GC = 
+Mean = 253.134 ms, StdErr = 0.751 ms (0.30%), N = 10, StdDev = 2.376 ms
+Min = 249.225 ms, Q1 = 251.164 ms, Median = 253.765 ms, Q3 = 254.486 ms, Max = 256.478 ms
+IQR = 3.321 ms, LowerFence = 246.183 ms, UpperFence = 259.467 ms
+ConfidenceInterval = [249.541 ms; 256.726 ms] (CI 99.9%), Margin = 3.593 ms (1.42% of Mean)
+Skewness = -0.17, Kurtosis = 1.51, MValue = 2
+-------------------- Histogram --------------------
+[247.777 ms ; 257.248 ms) | @@@@@@@@@@
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5608/22H2/2022Update)
+Intel Core i5-8400 CPU 2.80GHz (Coffee Lake), 1 CPU, 6 logical and 6 physical cores
+.NET SDK 9.0.100
+  [Host] : .NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+
+Job=MediumRun  Toolchain=InProcessNoEmitToolchain  InvocationCount=10  
+IterationCount=10  LaunchCount=1  UnrollFactor=10  
+WarmupCount=5  
+
+| Method          | NumberOfRecords | Mean     | Error   | StdDev  | Gen0       | Gen1      | Gen2      | Allocated |
+|---------------- |---------------- |---------:|--------:|--------:|-----------:|----------:|----------:|----------:|
+| EFCore_Postgres | 100             | 236.7 ms | 5.14 ms | 3.40 ms | 10500.0000 | 5800.0000 | 1000.0000 |  60.64 MB |
+| EFCore_MSSQL    | 100             | 256.5 ms | 3.18 ms | 1.66 ms | 10300.0000 | 5500.0000 |  800.0000 |  60.68 MB |
+| EFCore_Postgres | 1000            | 239.1 ms | 3.51 ms | 2.32 ms | 10300.0000 | 5500.0000 |  800.0000 |  60.64 MB |
+| EFCore_MSSQL    | 1000            | 253.1 ms | 3.59 ms | 2.38 ms | 10300.0000 | 5500.0000 |  800.0000 |  60.69 MB |
+
+// * Warnings *
+Environment
+  Summary                                          -> Benchmark was executed with attached debugger
+  SelectPeopleBenchmark.EFCore_Postgres: MediumRun -> Benchmark was built without optimization enabled (most probably a DEBUG configuration). Please, build it in RELEASE.
+
+// * Hints *
+Outliers
+  SelectPeopleBenchmark.EFCore_MSSQL: MediumRun -> 2 outliers were removed (264.15 ms, 267.35 ms)
+// * Config Issues *
+
+// * Warnings *
+Configuration
+  Summary -> The exporter HtmlExporter is already present in configuration. There may be unexpected results.
+
+// * Legends *
+  NumberOfRecords : Value of the 'NumberOfRecords' parameter
+  Mean            : Arithmetic mean of all measurements
+  Error           : Half of 99.9% confidence interval
+  StdDev          : Standard deviation of all measurements
+  Gen0            : GC Generation 0 collects per 1000 operations
+  Gen1            : GC Generation 1 collects per 1000 operations
+  Gen2            : GC Generation 2 collects per 1000 operations
+  Allocated       : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  1 ms            : 1 Millisecond (0.001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:03:03 (183.66 sec), executed benchmarks: 4
+
+Global total time: 00:03:04 (184.34 sec), executed benchmarks: 4
+// * Artifacts cleanup *
+Artifacts cleanup is finished

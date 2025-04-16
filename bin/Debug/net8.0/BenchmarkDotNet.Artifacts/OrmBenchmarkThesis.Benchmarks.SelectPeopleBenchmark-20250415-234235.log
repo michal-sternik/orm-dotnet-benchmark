@@ -1,0 +1,76 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 2 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// ***** Done, took 00:00:00 (0.03 sec)   *****
+// Found 2 benchmarks:
+//   SelectPeopleBenchmark.RepoDb_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+//   SelectPeopleBenchmark.RepoDb_MSSQL: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: SelectPeopleBenchmark.RepoDb_Postgres: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+// *** Execute ***
+// Launch: 1 / 1
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT VectorSize=256
+// Job: MediumRun(Toolchain=InProcessNoEmitToolchain, InvocationCount=10, IterationCount=10, LaunchCount=1, UnrollFactor=10, WarmupCount=5)
+
+OverheadJitting  1: 10 op, 263800.00 ns, 26.3800 us/op
+WorkloadJitting  1: 10 op, 2173903100.00 ns, 217.3903 ms/op
+
+OverheadWarmup   1: 10 op, 3400.00 ns, 340.0000 ns/op
+OverheadWarmup   2: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadWarmup   3: 10 op, 4000.00 ns, 400.0000 ns/op
+OverheadWarmup   4: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadWarmup   5: 10 op, 4300.00 ns, 430.0000 ns/op
+OverheadWarmup   6: 10 op, 3100.00 ns, 310.0000 ns/op
+
+OverheadActual   1: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual   2: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   3: 10 op, 2200.00 ns, 220.0000 ns/op
+OverheadActual   4: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual   5: 10 op, 2800.00 ns, 280.0000 ns/op
+OverheadActual   6: 10 op, 3500.00 ns, 350.0000 ns/op
+OverheadActual   7: 10 op, 4800.00 ns, 480.0000 ns/op
+OverheadActual   8: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual   9: 10 op, 6000.00 ns, 600.0000 ns/op
+OverheadActual  10: 10 op, 4200.00 ns, 420.0000 ns/op
+OverheadActual  11: 10 op, 2000.00 ns, 200.0000 ns/op
+OverheadActual  12: 10 op, 3900.00 ns, 390.0000 ns/op
+OverheadActual  13: 10 op, 2900.00 ns, 290.0000 ns/op
+OverheadActual  14: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual  15: 10 op, 2400.00 ns, 240.0000 ns/op
+OverheadActual  16: 10 op, 2300.00 ns, 230.0000 ns/op
+OverheadActual  17: 10 op, 3600.00 ns, 360.0000 ns/op
+OverheadActual  18: 10 op, 1800.00 ns, 180.0000 ns/op
+OverheadActual  19: 10 op, 2100.00 ns, 210.0000 ns/op
+OverheadActual  20: 10 op, 1800.00 ns, 180.0000 ns/op
+
+WorkloadWarmup   1: 10 op, 962405100.00 ns, 96.2405 ms/op
+WorkloadWarmup   2: 10 op, 936579000.00 ns, 93.6579 ms/op
+WorkloadWarmup   3: 10 op, 890542400.00 ns, 89.0542 ms/op
+WorkloadWarmup   4: 10 op, 913381300.00 ns, 91.3381 ms/op
+WorkloadWarmup   5: 10 op, 877663100.00 ns, 87.7663 ms/op
+
+WorkloadActual   1: 10 op, 907104400.00 ns, 90.7104 ms/op
+WorkloadActual   2: 10 op, 930928200.00 ns, 93.0928 ms/op
+WorkloadActual   3: 10 op, 891213800.00 ns, 89.1214 ms/op
+WorkloadActual   4: 10 op, 883034300.00 ns, 88.3034 ms/op
+WorkloadActual   5: 10 op, 908436700.00 ns, 90.8437 ms/op
+WorkloadActual   6: 10 op, 890128400.00 ns, 89.0128 ms/op
+WorkloadActual   7: 10 op, 892102900.00 ns, 89.2103 ms/op
+WorkloadActual   8: 10 op, 881019400.00 ns, 88.1019 ms/op
+WorkloadActual   9: 10 op, 889155600.00 ns, 88.9156 ms/op
+WorkloadActual  10: 10 op, 857344100.00 ns, 85.7344 ms/op
+
+WorkloadResult   1: 10 op, 907102050.00 ns, 90.7102 ms/op
+WorkloadResult   2: 10 op, 930925850.00 ns, 93.0926 ms/op
+WorkloadResult   3: 10 op, 891211450.00 ns, 89.1211 ms/op
+WorkloadResult   4: 10 op, 883031950.00 ns, 88.3032 ms/op
+WorkloadResult   5: 10 op, 908434350.00 ns, 90.8434 ms/op
+W
