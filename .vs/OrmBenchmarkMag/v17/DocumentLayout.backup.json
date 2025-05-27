@@ -3,52 +3,76 @@
   "WorkspaceRootPath": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectpeoplebenchmark\\selectpeoplebenchmark.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectpeoplebenchmark\\selectpeoplebenchmark.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectcustomerswithordersbenchmark\\selectcustomerswithordersbenchmarkpostgres.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectcustomerswithordersbenchmark\\selectcustomerswithordersbenchmarkpostgres.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\ormbenchmarkbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\ormbenchmarkbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectemployeeswithpaybenchmark\\selectemployeeswithpaybenchmarkpostgres.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectemployeeswithpaybenchmark\\selectemployeeswithpaybenchmarkpostgres.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\config\\repodbmappingsetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:config\\repodbmappingsetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\config\\thesisbenchmarkconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:config\\thesisbenchmarkconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\data\\postgresqldbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:data\\postgresqldbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\data\\mssqldbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:data\\mssqldbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectemployeeswithpaybenchmark\\selectemployeeswithpaybenchmarkmssql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectemployeeswithpaybenchmark\\selectemployeeswithpaybenchmarkmssql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\ormbenchmarkmag.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:ormbenchmarkmag.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\config\\thesisbenchmarkconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:config\\thesisbenchmarkconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectcustomerswithordersbenchmark\\selectcustomerswithordersbenchmarkmssql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectcustomerswithordersbenchmark\\selectcustomerswithordersbenchmarkmssql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\config\\ormliteschemaconfigurator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:config\\ormliteschemaconfigurator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectpeoplebenchmark\\selectpeoplebenchmarkpostgres.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectpeoplebenchmark\\selectpeoplebenchmarkpostgres.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\ormbenchmarkbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\ormbenchmarkbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\department.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\department.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\employeedepartmenthistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\employeedepartmenthistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\person.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\person.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\employeepayhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\employeepayhistory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\salesorderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\salesorderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\models\\salesorderheader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:models\\salesorderheader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\config\\postgresrepodbmappingsetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:config\\postgresrepodbmappingsetup.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|c:\\users\\march3wa\\source\\repos\\ormbenchmarkmag\\benchmarks\\selectpeoplebenchmark\\selectpeoplebenchmarkmssql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24125C96-3FBC-40CD-BBF5-BA20501A607A}|OrmBenchmarkMag.csproj|solutionrelative:benchmarks\\selectpeoplebenchmark\\selectpeoplebenchmarkmssql.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -57,155 +81,242 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 314,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "SelectPeopleBenchmark.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmark.cs",
-              "RelativeDocumentMoniker": "Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmark.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmark.cs",
-              "RelativeToolTip": "Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmark.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAswCAAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T12:47:10.506Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "ThesisBenchmarkConfig.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\ThesisBenchmarkConfig.cs",
-              "RelativeDocumentMoniker": "Config\\ThesisBenchmarkConfig.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\ThesisBenchmarkConfig.cs",
-              "RelativeToolTip": "Config\\ThesisBenchmarkConfig.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAA/AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T11:47:36.722Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "OrmBenchmarkMag.csproj",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\OrmBenchmarkMag.csproj",
-              "RelativeDocumentMoniker": "OrmBenchmarkMag.csproj",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\OrmBenchmarkMag.csproj",
-              "RelativeToolTip": "OrmBenchmarkMag.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABSAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-03-28T11:47:13.873Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "PostgresqlDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Data\\PostgresqlDbContext.cs",
-              "RelativeDocumentMoniker": "Data\\PostgresqlDbContext.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Data\\PostgresqlDbContext.cs",
-              "RelativeToolTip": "Data\\PostgresqlDbContext.cs",
-              "ViewState": "AgIAAF4KAAAAAAAAAAAqwBcDAABbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T11:14:32.989Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwCkAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T10:09:18.284Z"
+              "WhenOpened": "2025-05-27T09:11:52.705Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "RepoDbMappingSetup.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\RepoDbMappingSetup.cs",
-              "RelativeDocumentMoniker": "Config\\RepoDbMappingSetup.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\RepoDbMappingSetup.cs",
-              "RelativeToolTip": "Config\\RepoDbMappingSetup.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "SelectCustomersWithOrdersBenchmarkPostgres.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkPostgres.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkPostgres.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkPostgres.cs*",
+              "RelativeToolTip": "Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkPostgres.cs*",
+              "ViewState": "AgIAABoAAAAAAAAAAAAwwCsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-15T21:21:22.038Z",
+              "WhenOpened": "2025-05-27T09:12:21.559Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ThesisBenchmarkConfig.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\ThesisBenchmarkConfig.cs",
+              "RelativeDocumentMoniker": "Config\\ThesisBenchmarkConfig.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\ThesisBenchmarkConfig.cs",
+              "RelativeToolTip": "Config\\ThesisBenchmarkConfig.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAB0AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T09:23:51.787Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "OrmBenchmarkBase.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\OrmBenchmarkBase.cs",
-              "RelativeDocumentMoniker": "Benchmarks\\OrmBenchmarkBase.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\OrmBenchmarkBase.cs",
-              "RelativeToolTip": "Benchmarks\\OrmBenchmarkBase.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAUwBYAAAAAAAAAAAAAAA==",
+              "Title": "SelectEmployeesWithPayBenchmarkPostgres.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkPostgres.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkPostgres.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkPostgres.cs",
+              "RelativeToolTip": "Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkPostgres.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAgwCwAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T12:44:31.577Z",
+              "WhenOpened": "2025-05-27T12:49:01.249Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SelectEmployeesWithPayBenchmarkMssql.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkMssql.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkMssql.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkMssql.cs",
+              "RelativeToolTip": "Benchmarks\\SelectEmployeesWithPayBenchmark\\SelectEmployeesWithPayBenchmarkMssql.cs",
+              "ViewState": "AgIAADIAAAAAAAAAAAAwwE4AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T12:07:21.882Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SelectCustomersWithOrdersBenchmarkMssql.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkMssql.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkMssql.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkMssql.cs",
+              "RelativeToolTip": "Benchmarks\\SelectCustomersWithOrdersBenchmark\\SelectCustomersWithOrdersBenchmarkMssql.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T09:12:40.844Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "OrmLiteSchemaConfigurator.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\OrmLiteSchemaConfigurator.cs",
+              "RelativeDocumentMoniker": "Config\\OrmLiteSchemaConfigurator.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\OrmLiteSchemaConfigurator.cs",
+              "RelativeToolTip": "Config\\OrmLiteSchemaConfigurator.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T14:01:38.723Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SelectPeopleBenchmarkPostgres.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkPostgres.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkPostgres.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkPostgres.cs",
+              "RelativeToolTip": "Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkPostgres.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAowCAAAABnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T13:00:16.683Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "Address.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Address.cs",
-              "RelativeDocumentMoniker": "Models\\Address.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Address.cs",
-              "RelativeToolTip": "Models\\Address.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAARAAAAAAAAAA==",
+              "Title": "OrmBenchmarkBase.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\OrmBenchmarkBase.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\OrmBenchmarkBase.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\OrmBenchmarkBase.cs",
+              "RelativeToolTip": "Benchmarks\\OrmBenchmarkBase.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAkwDAAAABaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T11:13:41.929Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MssqlDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Data\\MssqlDbContext.cs",
-              "RelativeDocumentMoniker": "Data\\MssqlDbContext.cs",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Data\\MssqlDbContext.cs",
-              "RelativeToolTip": "Data\\MssqlDbContext.cs",
-              "ViewState": "AgIAAPYJAAAAAAAAAAAqwJkAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T11:12:42.766Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "appsettings.Development.json",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\appsettings.Development.json",
-              "RelativeDocumentMoniker": "appsettings.Development.json",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\appsettings.Development.json",
-              "RelativeToolTip": "appsettings.Development.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-28T11:15:23.082Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-03-28T11:15:24.095Z"
+              "WhenOpened": "2025-05-27T09:28:31.262Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
+              "Title": "Department.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Department.cs",
+              "RelativeDocumentMoniker": "Models\\Department.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Department.cs",
+              "RelativeToolTip": "Models\\Department.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T12:44:36.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "EmployeeDepartmentHistory.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\EmployeeDepartmentHistory.cs",
+              "RelativeDocumentMoniker": "Models\\EmployeeDepartmentHistory.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\EmployeeDepartmentHistory.cs",
+              "RelativeToolTip": "Models\\EmployeeDepartmentHistory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T12:44:29.079Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Person.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Person.cs",
+              "RelativeDocumentMoniker": "Models\\Person.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Person.cs",
+              "RelativeToolTip": "Models\\Person.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T13:13:37.876Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "EmployeePayHistory.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\EmployeePayHistory.cs",
+              "RelativeDocumentMoniker": "Models\\EmployeePayHistory.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\EmployeePayHistory.cs",
+              "RelativeToolTip": "Models\\EmployeePayHistory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAkAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T12:44:17.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "Employee.cs",
               "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Employee.cs",
               "RelativeDocumentMoniker": "Models\\Employee.cs",
               "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\Employee.cs",
               "RelativeToolTip": "Models\\Employee.cs",
-              "ViewState": "AgIAAEkAAAAAAAAAAAAywFUAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAsAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T11:18:31.372Z"
+              "WhenOpened": "2025-05-27T12:08:43.264Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "SalesOrderDetail.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\SalesOrderDetail.cs",
+              "RelativeDocumentMoniker": "Models\\SalesOrderDetail.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\SalesOrderDetail.cs",
+              "RelativeToolTip": "Models\\SalesOrderDetail.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T13:15:17.465Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "SalesOrderHeader.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\SalesOrderHeader.cs",
+              "RelativeDocumentMoniker": "Models\\SalesOrderHeader.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Models\\SalesOrderHeader.cs",
+              "RelativeToolTip": "Models\\SalesOrderHeader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T13:15:13.728Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "PostgresRepoDbMappingSetup.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\PostgresRepoDbMappingSetup.cs",
+              "RelativeDocumentMoniker": "Config\\PostgresRepoDbMappingSetup.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Config\\PostgresRepoDbMappingSetup.cs",
+              "RelativeToolTip": "Config\\PostgresRepoDbMappingSetup.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAQwAgAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T09:28:29.162Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SelectPeopleBenchmarkMssql.cs",
+              "DocumentMoniker": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkMssql.cs",
+              "RelativeDocumentMoniker": "Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkMssql.cs",
+              "ToolTip": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkMssql.cs",
+              "RelativeToolTip": "Benchmarks\\SelectPeopleBenchmark\\SelectPeopleBenchmarkMssql.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAQwB0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-27T12:15:54.235Z",
+              "EditorCaption": ""
             }
           ]
         }

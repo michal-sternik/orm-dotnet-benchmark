@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinqToDB.Mapping;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// State and province lookup table.
 /// </summary>
+[Table(Schema = "Person", Name = "StateProvince")]
+[Schema("Person")]
 public partial class StateProvince
 {
     /// <summary>

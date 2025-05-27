@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinqToDB.Mapping;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Employee information such as salary, department, and title.
 /// </summary>
+[Table(Schema = "HumanResources", Name = "Employee")]
+[Schema("HumanResources")]
 public partial class Employee
 {
     /// <summary>

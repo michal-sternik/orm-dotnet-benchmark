@@ -17,7 +17,13 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": "9.0.3",
           "RepoDb": "1.13.1",
           "RepoDb.PostgreSql": "1.13.1",
-          "RepoDb.SqlServer": "1.13.1"
+          "RepoDb.SqlServer": "1.13.1",
+          "ServiceStack.OrmLite": "8.7.0",
+          "ServiceStack.OrmLite.PostgreSQL": "8.7.0",
+          "ServiceStack.OrmLite.SqlServer": "8.7.0",
+          "linq2db": "5.4.1",
+          "linq2db.PostgreSQL": "5.4.1",
+          "linq2db.SqlServer": "5.4.1"
         },
         "runtime": {
           "OrmBenchmarkMag.dll": {}
@@ -46,7 +52,7 @@
           "Azure.Core": "1.38.0",
           "Microsoft.Identity.Client": "4.61.3",
           "Microsoft.Identity.Client.Extensions.Msal": "4.61.3",
-          "System.Memory": "4.5.4",
+          "System.Memory": "4.6.0",
           "System.Security.Cryptography.ProtectedData": "6.0.0",
           "System.Text.Json": "9.0.2",
           "System.Threading.Tasks.Extensions": "4.5.4"
@@ -183,6 +189,25 @@
             "assemblyVersion": "1.17.0.0",
             "fileVersion": "1.17.0.0"
           }
+        }
+      },
+      "linq2db/5.4.1": {
+        "runtime": {
+          "lib/net6.0/linq2db.dll": {
+            "assemblyVersion": "5.4.1.0",
+            "fileVersion": "5.4.1.0"
+          }
+        }
+      },
+      "linq2db.PostgreSQL/5.4.1": {
+        "dependencies": {
+          "Npgsql": "9.0.3",
+          "linq2db": "5.4.1"
+        }
+      },
+      "linq2db.SqlServer/5.4.1": {
+        "dependencies": {
+          "linq2db": "5.4.1"
         }
       },
       "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
@@ -932,14 +957,14 @@
           }
         }
       },
-      "Npgsql/9.0.2": {
+      "Npgsql/9.0.3": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "9.0.2"
         },
         "runtime": {
           "lib/net8.0/Npgsql.dll": {
-            "assemblyVersion": "9.0.2.0",
-            "fileVersion": "9.0.2.0"
+            "assemblyVersion": "9.0.3.0",
+            "fileVersion": "9.0.3.0"
           }
         }
       },
@@ -947,7 +972,7 @@
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "9.0.2",
           "Microsoft.EntityFrameworkCore.Relational": "9.0.2",
-          "Npgsql": "9.0.2"
+          "Npgsql": "9.0.3"
         },
         "runtime": {
           "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll": {
@@ -984,7 +1009,7 @@
       },
       "RepoDb.PostgreSql/1.13.1": {
         "dependencies": {
-          "Npgsql": "9.0.2",
+          "Npgsql": "9.0.3",
           "RepoDb": "1.13.1"
         },
         "runtime": {
@@ -1006,6 +1031,40 @@
           }
         }
       },
+      "runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "dependencies": {
+          "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni": "4.4.0",
+          "runtime.win-x64.runtime.native.System.Data.SqlClient.sni": "4.4.0",
+          "runtime.win-x86.runtime.native.System.Data.SqlClient.sni": "4.4.0"
+        }
+      },
+      "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "runtimeTargets": {
+          "runtimes/win-arm64/native/sni.dll": {
+            "rid": "win-arm64",
+            "assetType": "native",
+            "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
+      "runtime.win-x64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "runtimeTargets": {
+          "runtimes/win-x64/native/sni.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
+      "runtime.win-x86.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+        "runtimeTargets": {
+          "runtimes/win-x86/native/sni.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "4.6.25512.1"
+          }
+        }
+      },
       "ScottPlot/5.0.25": {
         "dependencies": {
           "SkiaSharp": "2.88.7",
@@ -1015,6 +1074,89 @@
           "lib/net8.0/ScottPlot.dll": {
             "assemblyVersion": "5.0.25.0",
             "fileVersion": "5.0.25.0"
+          }
+        }
+      },
+      "ServiceStack.Common/8.7.0": {
+        "dependencies": {
+          "ServiceStack.Interfaces": "8.7.0",
+          "ServiceStack.Text": "8.7.0",
+          "System.Memory": "4.6.0"
+        },
+        "runtime": {
+          "lib/net8.0/ServiceStack.Common.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.7.0.0"
+          }
+        }
+      },
+      "ServiceStack.Interfaces/8.7.0": {
+        "runtime": {
+          "lib/net8.0/ServiceStack.Interfaces.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.7.0.0"
+          }
+        }
+      },
+      "ServiceStack.OrmLite/8.7.0": {
+        "dependencies": {
+          "ServiceStack.Common": "8.7.0",
+          "System.Collections.NonGeneric": "4.3.0",
+          "System.ComponentModel.Annotations": "5.0.0",
+          "System.ComponentModel.Primitives": "4.3.0",
+          "System.Dynamic.Runtime": "4.3.0",
+          "System.Memory": "4.6.0",
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.Emit.Lightweight": "4.7.0",
+          "System.Reflection.TypeExtensions": "4.7.0"
+        },
+        "runtime": {
+          "lib/net8.0/ServiceStack.OrmLite.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.7.0.0"
+          }
+        }
+      },
+      "ServiceStack.OrmLite.PostgreSQL/8.7.0": {
+        "dependencies": {
+          "Npgsql": "9.0.3",
+          "ServiceStack.Common": "8.7.0",
+          "ServiceStack.Interfaces": "8.7.0",
+          "ServiceStack.OrmLite": "8.7.0",
+          "ServiceStack.Text": "8.7.0"
+        },
+        "runtime": {
+          "lib/net8.0/ServiceStack.OrmLite.PostgreSQL.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.7.0.0"
+          }
+        }
+      },
+      "ServiceStack.OrmLite.SqlServer/8.7.0": {
+        "dependencies": {
+          "ServiceStack.Common": "8.7.0",
+          "ServiceStack.Interfaces": "8.7.0",
+          "ServiceStack.OrmLite": "8.7.0",
+          "ServiceStack.Text": "8.7.0",
+          "System.Data.SqlClient": "4.9.0"
+        },
+        "runtime": {
+          "lib/net8.0/ServiceStack.OrmLite.SqlServer.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.7.0.0"
+          }
+        }
+      },
+      "ServiceStack.Text/8.7.0": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "System.Diagnostics.DiagnosticSource": "9.0.2",
+          "System.Memory": "4.6.0"
+        },
+        "runtime": {
+          "lib/net8.0/ServiceStack.Text.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "8.7.0.0"
           }
         }
       },
@@ -1113,7 +1255,29 @@
         }
       },
       "System.Collections.Immutable/7.0.0": {},
+      "System.Collections.NonGeneric/4.3.0": {
+        "dependencies": {
+          "System.Diagnostics.Debug": "4.3.0",
+          "System.Globalization": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0",
+          "System.Threading": "4.3.0"
+        }
+      },
+      "System.ComponentModel/4.3.0": {
+        "dependencies": {
+          "System.Runtime": "4.3.0"
+        }
+      },
       "System.ComponentModel.Annotations/5.0.0": {},
+      "System.ComponentModel.Primitives/4.3.0": {
+        "dependencies": {
+          "System.ComponentModel": "4.3.0",
+          "System.Resources.ResourceManager": "4.3.0",
+          "System.Runtime": "4.3.0"
+        }
+      },
       "System.Composition/7.0.0": {
         "dependencies": {
           "System.Composition.AttributedModel": "7.0.0",
@@ -1196,6 +1360,31 @@
           "System.Runtime.Extensions": "4.3.0",
           "System.Text.RegularExpressions": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
+        }
+      },
+      "System.Data.SqlClient/4.9.0": {
+        "dependencies": {
+          "runtime.native.System.Data.SqlClient.sni": "4.4.0"
+        },
+        "runtime": {
+          "lib/net8.0/System.Data.SqlClient.dll": {
+            "assemblyVersion": "4.6.1.6",
+            "fileVersion": "4.900.24.56208"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/net8.0/System.Data.SqlClient.dll": {
+            "rid": "unix",
+            "assetType": "runtime",
+            "assemblyVersion": "4.6.1.6",
+            "fileVersion": "4.900.24.56208"
+          },
+          "runtimes/win/lib/net8.0/System.Data.SqlClient.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "4.6.1.6",
+            "fileVersion": "4.900.24.56208"
+          }
         }
       },
       "System.Diagnostics.Debug/4.3.0": {
@@ -1362,7 +1551,7 @@
           }
         }
       },
-      "System.Memory/4.5.4": {},
+      "System.Memory/4.6.0": {},
       "System.Memory.Data/1.0.2": {
         "dependencies": {
           "System.Text.Encodings.Web": "9.0.2",
@@ -1657,6 +1846,27 @@
       "sha512": "sha512-8x+HCVTl/HHTGpscH3vMBhV8sknN/muZFw9s3TsI8SA6+c43cOTCi2+jE4KsU8pNLbJ++iF2ZFcpcXHXtDglnw==",
       "path": "iced/1.17.0",
       "hashPath": "iced.1.17.0.nupkg.sha512"
+    },
+    "linq2db/5.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qyH32MbFK6T55KsEcQYTbPFfkOa1Mo65lY/Zo8SFVMy0pwkQBCTnA/RUxyG5+l3D/mgfPz85PH3upDrtklSMrw==",
+      "path": "linq2db/5.4.1",
+      "hashPath": "linq2db.5.4.1.nupkg.sha512"
+    },
+    "linq2db.PostgreSQL/5.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UCZrvZJKkBw2I8Q28QCNlj3T0h1ck8wPdgHv+R8c21BJiMasBwuy81IIbC3ntz51lN8AH9o6Te6oePD/p7FkMQ==",
+      "path": "linq2db.postgresql/5.4.1",
+      "hashPath": "linq2db.postgresql.5.4.1.nupkg.sha512"
+    },
+    "linq2db.SqlServer/5.4.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BV7icIONfhPRIA8NSBWH1SPFW+7xP5mSkQfxwuhPrYg1c+TJlLcDN1psvrjYpvBYYdqYXQ6II/7KtANaiLF3JA==",
+      "path": "linq2db.sqlserver/5.4.1",
+      "hashPath": "linq2db.sqlserver.5.4.1.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/7.0.0": {
       "type": "package",
@@ -1987,12 +2197,12 @@
       "path": "mono.texttemplating/3.0.0",
       "hashPath": "mono.texttemplating.3.0.0.nupkg.sha512"
     },
-    "Npgsql/9.0.2": {
+    "Npgsql/9.0.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-hCbO8box7i/XXiTFqCJ3GoowyLqx3JXxyrbOJ6om7dr+eAknvBNhhUHeJVGAQo44sySZTfdVffp4BrtPeLZOAA==",
-      "path": "npgsql/9.0.2",
-      "hashPath": "npgsql.9.0.2.nupkg.sha512"
+      "sha512": "sha512-tPvY61CxOAWxNsKLEBg+oR646X4Bc8UmyQ/tJszL/7mEmIXQnnBhVJZrZEEUv0Bstu0mEsHZD5At3EO8zQRAYw==",
+      "path": "npgsql/9.0.3",
+      "hashPath": "npgsql.9.0.3.nupkg.sha512"
     },
     "Npgsql.EntityFrameworkCore.PostgreSQL/9.0.3": {
       "type": "package",
@@ -2029,12 +2239,82 @@
       "path": "repodb.sqlserver/1.13.1",
       "hashPath": "repodb.sqlserver.1.13.1.nupkg.sha512"
     },
+    "runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-A8v6PGmk+UGbfWo5Ixup0lPM4swuSwOiayJExZwKIOjTlFFQIsu3QnDXECosBEyrWSPryxBVrdqtJyhK3BaupQ==",
+      "path": "runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LbrynESTp3bm5O/+jGL8v0Qg5SJlTV08lpIpFesXjF6uGNMWqFnUQbYBJwZTeua6E/Y7FIM1C54Ey1btLWupdg==",
+      "path": "runtime.win-arm64.runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "runtime.win-x64.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-38ugOfkYJqJoX9g6EYRlZB5U2ZJH51UP8ptxZgdpS07FgOEToV+lS11ouNK2PM12Pr6X/PpT5jK82G3DwH/SxQ==",
+      "path": "runtime.win-x64.runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "runtime.win-x86.runtime.native.System.Data.SqlClient.sni/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YhEdSQUsTx+C8m8Bw7ar5/VesXvCFMItyZF7G1AUY+OM0VPZUOeAVpJ4Wl6fydBGUYZxojTDR3I6Bj/+BPkJNA==",
+      "path": "runtime.win-x86.runtime.native.system.data.sqlclient.sni/4.4.0",
+      "hashPath": "runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
     "ScottPlot/5.0.25": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-2Y4SJXsbg7BbT5Xd30BieF0skdT3KkYAVNOQHS55lHlh8AHdLOB8TsxRuiLRQbF+6lKoq/9TYwSxeg25I5DuOA==",
       "path": "scottplot/5.0.25",
       "hashPath": "scottplot.5.0.25.nupkg.sha512"
+    },
+    "ServiceStack.Common/8.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9go7+aojBsD5wg0dgFbeGdLKU60BbV/nrIcHh+h4XMcPvp2TX/F4mvbUcsKTp/LKqXe9s9nelqom42PPTrLLeQ==",
+      "path": "servicestack.common/8.7.0",
+      "hashPath": "servicestack.common.8.7.0.nupkg.sha512"
+    },
+    "ServiceStack.Interfaces/8.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eiQdQn2vqVtEw250yMv0B1pxVXManJJpSzlSorKYzv80xqXOsw3NtkA1KYR52YOzweYbuglAKezsRwLc0E2Z0w==",
+      "path": "servicestack.interfaces/8.7.0",
+      "hashPath": "servicestack.interfaces.8.7.0.nupkg.sha512"
+    },
+    "ServiceStack.OrmLite/8.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-F0RpvBDUx9A5P8FHWO9umWKvGn09PNd9OLie4P0CtEaknNtTG47kRlDXbitKLcZMLSkDdqKU1IjCZdo7vvSDcg==",
+      "path": "servicestack.ormlite/8.7.0",
+      "hashPath": "servicestack.ormlite.8.7.0.nupkg.sha512"
+    },
+    "ServiceStack.OrmLite.PostgreSQL/8.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SeomegVYPGE/rVekDdPUQ/pelOiSrei3DNlPos8JLopH2EKtKDrGUUQaOkfu/wIuF9o+t7RwvvAvBiX3+Sc7ww==",
+      "path": "servicestack.ormlite.postgresql/8.7.0",
+      "hashPath": "servicestack.ormlite.postgresql.8.7.0.nupkg.sha512"
+    },
+    "ServiceStack.OrmLite.SqlServer/8.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dnVvRtg76NKa5HKjfjkHQx3UhoWkjcehjr3+7iDdSbo3YmY7xKiCZbLOdU3NtCjXvyfkW01yqbFj8zBQnhRT/A==",
+      "path": "servicestack.ormlite.sqlserver/8.7.0",
+      "hashPath": "servicestack.ormlite.sqlserver.8.7.0.nupkg.sha512"
+    },
+    "ServiceStack.Text/8.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GHQ3wLNW3PQFeKIdrMeyiUfJxUuek4ofl8+yNoWkvtwoYOaeLcA9XgdNxmmtlK5gOOMsTGp9We8VWUu1aQWPeA==",
+      "path": "servicestack.text/8.7.0",
+      "hashPath": "servicestack.text.8.7.0.nupkg.sha512"
     },
     "SkiaSharp/2.88.7": {
       "type": "package",
@@ -2092,12 +2372,33 @@
       "path": "system.collections.immutable/7.0.0",
       "hashPath": "system.collections.immutable.7.0.0.nupkg.sha512"
     },
+    "System.Collections.NonGeneric/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-prtjIEMhGUnQq6RnPEYLpFt8AtLbp9yq2zxOSrY7KJJZrw25Fi97IzBqY7iqssbM61Ek5b8f3MG/sG1N2sN5KA==",
+      "path": "system.collections.nongeneric/4.3.0",
+      "hashPath": "system.collections.nongeneric.4.3.0.nupkg.sha512"
+    },
+    "System.ComponentModel/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VyGn1jGRZVfxnh8EdvDCi71v3bMXrsu8aYJOwoV7SNDLVhiEqwP86pPMyRGsDsxhXAm2b3o9OIqeETfN5qfezw==",
+      "path": "system.componentmodel/4.3.0",
+      "hashPath": "system.componentmodel.4.3.0.nupkg.sha512"
+    },
     "System.ComponentModel.Annotations/5.0.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg==",
       "path": "system.componentmodel.annotations/5.0.0",
       "hashPath": "system.componentmodel.annotations.5.0.0.nupkg.sha512"
+    },
+    "System.ComponentModel.Primitives/4.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-j8GUkCpM8V4d4vhLIIoBLGey2Z5bCkMVNjEZseyAlm4n5arcsJOeI3zkUP+zvZgzsbLTYh4lYeP/ZD/gdIAPrw==",
+      "path": "system.componentmodel.primitives/4.3.0",
+      "hashPath": "system.componentmodel.primitives.4.3.0.nupkg.sha512"
     },
     "System.Composition/7.0.0": {
       "type": "package",
@@ -2154,6 +2455,13 @@
       "sha512": "sha512-lm6E3T5u7BOuEH0u18JpbJHxBfOJPuCyl4Kg1RH10ktYLp5uEEE1xKrHW56/We4SnZpGAuCc9N0MJpSDhTHZGQ==",
       "path": "system.data.common/4.3.0",
       "hashPath": "system.data.common.4.3.0.nupkg.sha512"
+    },
+    "System.Data.SqlClient/4.9.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-j4KJO+vC62NyUtNHz854njEqXbT8OmAa5jb1nrGfYWBOcggyYUQE0w/snXeaCjdvkSKWuUD+hfvlbN8pTrJTXg==",
+      "path": "system.data.sqlclient/4.9.0",
+      "hashPath": "system.data.sqlclient.4.9.0.nupkg.sha512"
     },
     "System.Diagnostics.Debug/4.3.0": {
       "type": "package",
@@ -2246,12 +2554,12 @@
       "path": "system.management/5.0.0",
       "hashPath": "system.management.5.0.0.nupkg.sha512"
     },
-    "System.Memory/4.5.4": {
+    "System.Memory/4.6.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
-      "path": "system.memory/4.5.4",
-      "hashPath": "system.memory.4.5.4.nupkg.sha512"
+      "sha512": "sha512-OEkbBQoklHngJ8UD8ez2AERSk2g+/qpAaSWWCBFbpH727HxDq5ydVkuncBaKcKfwRqXGWx64dS6G1SUScMsitg==",
+      "path": "system.memory/4.6.0",
+      "hashPath": "system.memory.4.6.0.nupkg.sha512"
     },
     "System.Memory.Data/1.0.2": {
       "type": "package",

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinqToDB.Mapping;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// General sales order information.
 /// </summary>
+[Table(Schema = "Sales", Name = "SalesOrderHeader")]
+[Schema("Sales")]
 public partial class SalesOrderHeader
 {
     /// <summary>

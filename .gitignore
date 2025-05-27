@@ -1,0 +1,65 @@
+## IDE i środowisko .NET
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Build output
+bin/
+obj/
+TestResults/
+*.log
+
+## BenchmarkDotNet
+BenchmarkDotNet.Artifacts/
+*.benchmarkdotnet.*
+
+## Pliki systemowe
+*.db
+*.pdb
+*.cache
+*.cache.v2
+*.vsidx
+*.dtbcache.v2
+*.sourcelink.json
+
+## ServiceStack i inne DLL-e zewnętrzne (jeśli są w repo)
+*.dll
+*.exe
+*.deps.json
+*.runtimeconfig.json
+
+## NuGet
+*.nupkg
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Rider / JetBrains
+.idea/
+
+## VSCode
+.vscode/
+
+## Pliki tymczasowe
+*.tmp
+*.bak
+*.swp
+*.swo
+
+## Systemowe
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## Linux/Mac systemowe
+.DS_Store
+.Trashes
+*.swp
+*~
+
+## Inne możliwe katalogi pracy
+Releases/

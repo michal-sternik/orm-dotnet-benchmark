@@ -16,34 +16,10 @@ namespace OrmBenchmarkThesis.Benchmarks
 {
     [Config(typeof(ThesisBenchmarkConfig))]
     [MemoryDiagnoser]
-    public class SelectPeopleBenchmark : OrmBenchmarkBase
+    public class SelectPeopleBenchmarkMssql : OrmBenchmarkBase
 
     {
-        //robimy tylko przed pierwszym benchmarkiem RepoDB, bo mapowania nie mozna wykonac kilkukrotnie
-        [GlobalSetup(Target = nameof(RepoDb_Postgres))]
-        public void SetupRepoDBPostgres()
-        {
-            //dla RepoDB trzeba zmapować model na pakiet.model
-            //FluentMapper.Entity<SalesOrderHeader>()
-            //        .Table("sales.salesorderheader")
-            //        .Column(e => e.SalesOrderId, "salesorderid");
-            RepoDbMappingSetup.Init();
-        }
 
-        [GlobalCleanup (Target = nameof(RepoDb_Postgres))]
-        public void CleanupRepoDBPostgres()
-        {
-            //dla RepoDB trzeba zmapować model na pakiet.model
-            //FluentMapper.Entity<SalesOrderHeader>()
-            //        .Table("sales.salesorderheader")
-            //        .Column(e => e.SalesOrderId, "salesorderid");
-            //RepoDbMappingSetup.Init();
-            RepoDb.FluentMapper.Entity<SalesOrderHeader>()
-                    .Table("sales.salesorderheader")
-                    .// czyli niema wyjscia. trzeba to zrobic w dwoch roznych plikach (np rozdzielic w zaleznosci od uzywanej bazy jesli chcemy repodb. nie mozna fluentmappera w jednym uruchomieniu uzyc 2 razy
-
-
-        }
 
         [GlobalSetup(Target = nameof(RepoDb_MSSQL))]
         public void SetupRepoDbMssql()
@@ -51,47 +27,28 @@ namespace OrmBenchmarkThesis.Benchmarks
             //dla RepoDB trzeba zmapować model na pakiet.model
             FluentMapper.Entity<SalesOrderHeader>()
                     .Table("Sales.SalesOrderHeader");
-                    
+
 
         }
+
         //dla queries zwracajacych wiecej rekordow roznica miedzy mssql a postgres sie zaciera - chyba
         //[Params(100, 1000)] 
         //public int NumberOfRecords;
 
-        //[Benchmark]
-        //public List<SalesOrderHeader> EFCore_Postgres()
-        //{
-        //    using var context = CreatePostgresContext();
-        //    return context.SalesOrderHeaders.ToList();
-        //}
-
-        //[Benchmark]
-        //public List<SalesOrderHeader> EFCore_MSSQL()
-        //{
-        //    using var context = CreateMssqlContext();
-        //    return context.SalesOrderHeaders.ToList();
-        //}
-
-        //[Benchmark]
-        //public List<SalesOrderHeader> Dapper_MSSQL()
-        //{
-        //    using var connection = CreateMssqlConnection();
-        //    return connection.Query<SalesOrderHeader>("SELECT * FROM Sales.SalesOrderHeader").ToList();
-        //}
-
-        //[Benchmark]
-        //public List<SalesOrderHeader> Dapper_Postgres()
-        //{
-        //    using var connection = CreatePostgresConnection();
-        //    return connection.Query<SalesOrderHeader>("SELECT * FROM Sales.SalesOrderHeader").ToList();
-        //}
+        [Benchmark]
+        public List<SalesOrderHeader> EFCore_MSSQL()
+        {
+            using var context = CreateMssqlContext();
+            return context.SalesOrderHeaders.ToList();
+        }
 
         [Benchmark]
-        public List<SalesOrderHeader> RepoDb_Postgres()
+        public List<SalesOrderHeader> Dapper_MSSQL()
         {
-            using var connection = CreatePostgresConnection();
-            return connection.QueryAll<SalesOrderHeader>().ToList();
+            using var connection = CreateMssqlConnection();
+            return connection.Query<SalesOrderHeader>("SELECT * FROM Sales.SalesOrderHeader").ToList();
         }
+
         [Benchmark]
         public List<SalesOrderHeader> RepoDb_MSSQL()
         {
@@ -99,17 +56,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             return connection.QueryAll<SalesOrderHeader>().ToList();
         }
 
-
-
-
-
-        //[Benchmark]
-        //public List<Person> RawSql_MSSQL() =>
-        //    _mssqlContext.People.FromSqlRaw($"SELECT TOP {NumberOfRecords} * FROM Person.Person").ToList();
-
-        //[Benchmark]
-        //public List<Person> RawSql_Postgres() =>
-        //    _postgresContext.People.FromSqlRaw($"SELECT * FROM Person.Person LIMIT {NumberOfRecords}").ToList();
+       
     }
 }
 
@@ -136,3 +83,19 @@ namespace OrmBenchmarkThesis.Benchmarks
 //| EFCore_MSSQL | x100 | 3.271 ms | 0.0640 ms | 0.0423 ms | 511.0000 | 135.0000 | 2411.94 KB |
 //| EFCore_Postgres | x1000 | 5.754 ms | 0.3812 ms | 0.2268 ms | 425.0000 | 213.0000 | 2517.27 KB |
 //| EFCore_MSSQL | x1000 | 16.454 ms | 0.1307 ms | 0.0778 ms | 3954.0000 | 512.0000 | 23687.72 KB |
+
+//roznica miedzy "debug" a "release"
+
+//| Method | Mean | Error | StdDev | Gen0 | Gen1 | Gen2 | Allocated |
+//| ---------------- | ---------:| ---------:| --------:| -----------:| ----------:| ----------:| ----------:|
+//| EFCore_Postgres | 251.7 ms | 6.68 ms | 4.42 ms | 10500.0000 | 5700.0000 | 1000.0000 | 60.64 MB |
+//| EFCore_MSSQL | 280.9 ms | 8.26 ms | 5.46 ms | 10300.0000 | 5500.0000 | 800.0000 | 60.68 MB |
+//| Dapper_MSSQL | 152.5 ms | 6.29 ms | 3.74 ms | 5700.0000 | 3200.0000 | 600.0000 | 31.07 MB |
+//| Dapper_Postgres | 120.4 ms | 13.90 ms | 9.19 ms | 5700.0000 | 3100.0000 | 500.0000 | 31.78 MB |
+
+//| Method | Mean | Error | StdDev | Gen0 | Gen1 | Gen2 | Allocated |
+//| ---------------- | ---------:| --------:| --------:| -----------:| ----------:| ----------:| ----------:|
+//| EFCore_Postgres | 233.0 ms | 5.75 ms | 3.01 ms | 10600.0000 | 5900.0000 | 1100.0000 | 60.64 MB |
+//| EFCore_MSSQL | 256.6 ms | 9.17 ms | 4.79 ms | 10500.0000 | 5800.0000 | 1000.0000 | 60.68 MB |
+//| Dapper_MSSQL | 131.9 ms | 3.82 ms | 2.53 ms | 5500.0000 | 3000.0000 | 500.0000 | 31.07 MB |
+//| Dapper_Postgres | 108.6 ms | 2.25 ms | 1.34 ms | 5700.0000 | 3100.0000 | 500.0000 | 31.78 MB |

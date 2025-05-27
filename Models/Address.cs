@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinqToDB.Mapping;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Street address information for customers, employees, and vendors.
 /// </summary>
+[Table(Schema = "Person", Name = "Address")]
+[Schema("Person")]
 public partial class Address
 {
     /// <summary>

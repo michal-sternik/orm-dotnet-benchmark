@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Employee department transfers.
 /// </summary>
+[Schema("HumanResources")]
 public partial class EmployeeDepartmentHistory
 {
     /// <summary>

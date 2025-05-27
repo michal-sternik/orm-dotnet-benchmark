@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-20250330-190608</title>
+<title>OrmBenchmarkThesis.Benchmarks.SelectPeopleBenchmark-20250426-170623</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -13,21 +13,20 @@
 </head>
 <body>
 <pre><code>
-BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5608/22H2/2022Update)
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5737/22H2/2022Update)
 Intel Core i5-8400 CPU 2.80GHz (Coffee Lake), 1 CPU, 6 logical and 6 physical cores
-.NET SDK 9.0.100
-  [Host] : .NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX2 DEBUG [AttachedDebugger]
+.NET SDK 9.0.203
+  [Host] : .NET 8.0.15 (8.0.1525.16413), X64 RyuJIT AVX2 DEBUG
 </code></pre>
-<pre><code>Job=MediumRun  Toolchain=InProcessNoEmitToolchain  InvocationCount=100  
-IterationCount=1  LaunchCount=1  UnrollFactor=10  
-WarmupCount=1  
+<pre><code>Job=MediumRun  Toolchain=InProcessNoEmitToolchain  InvocationCount=10  
+IterationCount=10  LaunchCount=1  UnrollFactor=10  
+WarmupCount=5  
 </code></pre>
 
 <table>
-<thead><tr><th>Method   </th><th>Mean</th><th>Error</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+<thead><tr><th>Method   </th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>EFCore_Postgres</td><td>260.9 ms</td><td>NA</td><td>10870.0000</td><td>6100.0000</td><td>1320.0000</td><td>60.64 MB</td>
-</tr><tr><td>EFCore_MSSQL</td><td>282.9 ms</td><td>NA</td><td>10810.0000</td><td>6040.0000</td><td>1250.0000</td><td>60.68 MB</td>
+</thead><tbody><tr><td>RepoDb_Postgres</td><td>86.24 ms</td><td>2.314 ms</td><td>1.531 ms</td><td>3100.0000</td><td>2000.0000</td><td>500.0000</td><td>16.52 MB</td>
 </tr></tbody></table>
 </body>
 </html>

@@ -1,9 +1,12 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data;
+using LinqToDB.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OrmBenchmarkMag.Data;
 using OrmBenchmarkMag.Models;
 using RepoDb;
+using ServiceStack.OrmLite;
 
 
 namespace OrmBenchmarkMag.Benchmarks
@@ -16,6 +19,9 @@ namespace OrmBenchmarkMag.Benchmarks
         protected string MssqlConnectionString { get; }
         protected string PostgresConnectionString { get; }
 
+        private OrmLiteConnectionFactory _mssqlOrmLiteFactory;
+        private OrmLiteConnectionFactory _postgresOrmLiteFactory;
+
         protected OrmBenchmarkBase()
         {
             MssqlConnectionString = "Server=localhost,1433;Database=AdventureWorks2014;User Id=sa;Password=YourStr0ngP@ssw0rd!;TrustServerCertificate=True";
@@ -24,6 +30,9 @@ namespace OrmBenchmarkMag.Benchmarks
             GlobalConfiguration.Setup().UseSqlServer();
             GlobalConfiguration.Setup().UsePostgreSql();
 
+            //OrmLiteConfig.DialectProvider = PostgreSqlDialect.Provider;
+            //OrmLiteSchemaConfigurator.ConfigureSchemaAttributes();
+
             _mssqlOptions = new DbContextOptionsBuilder<MssqlDbContext>()
                 .UseSqlServer(MssqlConnectionString)
             .Options;
@@ -31,6 +40,20 @@ namespace OrmBenchmarkMag.Benchmarks
             _postgresOptions = new DbContextOptionsBuilder<PostgresqlDbContext>()
                 .UseNpgsql(PostgresConnectionString)
                 .Options;
+
+
+            //ormlite factiories
+            _mssqlOrmLiteFactory = new OrmLiteConnectionFactory(MssqlConnectionString, SqlServerDialect.Provider);
+
+            OrmLiteConfig.DialectProvider = PostgreSqlDialect.Provider;
+            OrmLiteConfig.DialectProvider.NamingStrategy = new PostgreSqlNamingStrategy();
+
+            // Potem utwórz connection factory
+            _postgresOrmLiteFactory = new OrmLiteConnectionFactory(PostgresConnectionString, PostgreSqlDialect.Provider);
+            
+
+
+
         }
 
         //EfCore
@@ -40,9 +63,30 @@ namespace OrmBenchmarkMag.Benchmarks
         //Dapper & RepoDB
         protected SqlConnection CreateMssqlConnection() => new SqlConnection(MssqlConnectionString);
         protected NpgsqlConnection CreatePostgresConnection() => new NpgsqlConnection(PostgresConnectionString);
+
+        //Linq2db
+        //protected DataConnection CreateLinq2DbMssqlConnection()
+        //{
+        //    var dc = new DataConnection(LinqToDB.ProviderName.SqlServer, MssqlConnectionString);
+        //    dc.MappingSchema.DefaultIgnoreEmptyTypes = false; // <-- to mówi: mapuj wszystkie klasy nawet bez [Table]
+        //    return dc;
+        //}
+        //protected DataConnection CreateLinq2DbPostgresConnection() => new DataConnection(LinqToDB.ProviderName.PostgreSQL, PostgresConnectionString);
+
+        // OrmLite
+        protected IDbConnection CreateOrmLiteMssqlConnection() => _mssqlOrmLiteFactory.OpenDbConnection();
+        protected IDbConnection CreateOrmLitePostgresConnection() => _postgresOrmLiteFactory.OpenDbConnection();
+
     }
 }
 
+
+public class PostgreSqlNamingStrategy : OrmLiteNamingStrategyBase
+{
+    public override string GetTableName(string name) => name.ToLower();
+    public override string GetSchemaName(string name) => name?.ToLower();
+
+}
 
 //using BenchmarkDotNet.Attributes;
 //using Microsoft.EntityFrameworkCore;

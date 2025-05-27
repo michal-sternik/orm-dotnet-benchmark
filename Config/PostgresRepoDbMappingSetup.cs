@@ -6,7 +6,7 @@ using System.Reflection;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 
-public static class RepoDbMappingSetup
+public static class PostgresRepoDbMappingSetup
 {
     private static bool _initialized = false;
     private static readonly object _lock = new();
@@ -24,6 +24,11 @@ public static class RepoDbMappingSetup
             //PostgreSqlBootstrap.Initialize();
 
             // Mapowanie modeli
+            MapEntityWithLowercase<Employee>("HumanResources.Employee", "humanresources.employee");
+            MapEntityWithLowercase<EmployeePayHistory>("HumanResources.EmployeePayHistory", "humanresources.employeepayhistory");
+            MapEntityWithLowercase<Person>("Person.Person", "person.person");
+            MapEntityWithLowercase<EmployeeDepartmentHistory>("HumanResources.EmployeeDepartmentHistory", "humanresources.employeedepartmenthistory");
+            MapEntityWithLowercase<Department>("HumanResources.Department", "humanresources.department");
             MapEntityWithLowercase<SalesOrderHeader>("Sales.SalesOrderHeader", "sales.salesorderheader");
             // Możesz tu dodać kolejne:
             // MapEntityWithLowercase<Customer>("Sales.Customer", "sales.customer");

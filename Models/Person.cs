@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinqToDB.Mapping;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Human beings involved with AdventureWorks: employees, customer contacts, and vendor contacts.
 /// </summary>
+[Table(Schema = "Person", Name = "Person")]
+[Schema("Person")]
 public partial class Person
 {
     /// <summary>

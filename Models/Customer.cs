@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinqToDB.Mapping;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Current customer information. Also see the Person and Store tables.
 /// </summary>
+//[Table(Schema = "Sales", Name = "Customer")]
+[Schema("Sales")]
 public partial class Customer
 {
     /// <summary>
