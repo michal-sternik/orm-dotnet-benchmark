@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Product subcategories. See ProductCategory table.
 /// </summary>
+[Schema("Production")]
 public partial class ProductSubcategory
 {
     /// <summary>

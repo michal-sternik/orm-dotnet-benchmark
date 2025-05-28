@@ -15,6 +15,11 @@ public static class OrmLiteSchemaConfigurator
         typeof(Department).AddAttributes(new SchemaAttribute("humanresources"));
         typeof(Person).AddAttributes(new SchemaAttribute("person"));
         typeof(Customer).AddAttributes(new SchemaAttribute("sales"));
+        typeof(Product).AddAttributes(new SchemaAttribute("production"));
+        typeof(ProductCategory).AddAttributes(new SchemaAttribute("production"));
+        typeof(ProductSubcategory).AddAttributes(new SchemaAttribute("production"));
+        typeof(UnitMeasure).AddAttributes(new SchemaAttribute("production"));
+        typeof(SalesOrderDetail).AddAttributes(new SchemaAttribute("sales"));
 
         typeof(Employee)
             .GetProperty(nameof(Employee.BusinessEntityId))
@@ -52,6 +57,9 @@ public static class OrmLiteSchemaConfigurator
         typeof(Customer)
             .GetProperty(nameof(Customer.PersonId))
             .AddAttributes(new AliasAttribute("personid"));
+        typeof(Customer)
+            .GetProperty(nameof(Customer.AccountNumber))
+            .AddAttributes(new AliasAttribute("accountnumber"));
 
         // SalesOrderHeader
         typeof(SalesOrderHeader).AddAttributes(new SchemaAttribute("sales"));
@@ -64,6 +72,9 @@ public static class OrmLiteSchemaConfigurator
         typeof(SalesOrderHeader)
             .GetProperty(nameof(SalesOrderHeader.BillToAddressId))
             .AddAttributes(new AliasAttribute("billtoaddressid"));
+        typeof(SalesOrderHeader)
+            .GetProperty(nameof(SalesOrderHeader.ShipToAddressId))
+            .AddAttributes(new AliasAttribute("shiptoaddressid"));
 
         // Address
         typeof(Address).AddAttributes(new SchemaAttribute("person"));
@@ -76,6 +87,9 @@ public static class OrmLiteSchemaConfigurator
         typeof(Address)
             .GetProperty(nameof(Address.StateProvinceId))
             .AddAttributes(new AliasAttribute("stateprovinceid"));
+        typeof(Address)
+            .GetProperty(nameof(Address.City))
+            .AddAttributes(new AliasAttribute("city"));
 
         // StateProvince
         typeof(StateProvince).AddAttributes(new SchemaAttribute("person"));
@@ -87,8 +101,60 @@ public static class OrmLiteSchemaConfigurator
             .AddAttributes(new AliasAttribute("name"));
 
 
+        // Production schema
+        typeof(Product)
+            .GetProperty(nameof(Product.Name))
+            .AddAttributes(new AliasAttribute("name"));
+        typeof(ProductCategory)
+            .GetProperty(nameof(ProductCategory.Name))
+            .AddAttributes(new AliasAttribute("name"));
+        typeof(ProductSubcategory)
+            .GetProperty(nameof(ProductSubcategory.Name))
+            .AddAttributes(new AliasAttribute("name"));
+        typeof(UnitMeasure)
+            .GetProperty(nameof(UnitMeasure.Name))
+            .AddAttributes(new AliasAttribute("name"));
+        typeof(Product)
+            .GetProperty(nameof(Product.ProductId))
+            .AddAttributes(new AliasAttribute("productid"));
 
-    
+        typeof(UnitMeasure)
+            .GetProperty(nameof(UnitMeasure.UnitMeasureCode))
+            .AddAttributes(new AliasAttribute("unitmeasurecode"));
+
+        typeof(Product)
+            .GetProperty(nameof(Product.ProductSubcategoryId))
+            .AddAttributes(new AliasAttribute("productsubcategoryid"));
+        typeof(Product)
+            .GetProperty(nameof(Product.WeightUnitMeasureCode))
+            .AddAttributes(new AliasAttribute("weightunitmeasurecode"));
+        typeof(Product)
+            .GetProperty(nameof(Product.SizeUnitMeasureCode))
+            .AddAttributes(new AliasAttribute("sizeunitmeasurecode"));
+
+        typeof(ProductCategory)
+            .GetProperty(nameof(ProductCategory.ProductCategoryId))
+            .AddAttributes(new AliasAttribute("productcategoryid"));
+
+        typeof(ProductSubcategory)
+            .GetProperty(nameof(ProductSubcategory.ProductCategoryId))
+            .AddAttributes(new AliasAttribute("productcategoryid"));
+        typeof(ProductSubcategory)
+            .GetProperty(nameof(ProductSubcategory.ProductSubcategoryId))
+            .AddAttributes(new AliasAttribute("productsubcategoryid"));
+
+        // SalesOrderDetail - pola
+        typeof(SalesOrderDetail)
+            .GetProperty(nameof(SalesOrderDetail.SalesOrderId))
+            .AddAttributes(new AliasAttribute("salesorderid"));
+        typeof(SalesOrderDetail)
+            .GetProperty(nameof(SalesOrderDetail.ProductId))
+            .AddAttributes(new AliasAttribute("productid"));
+        typeof(SalesOrderDetail)
+            .GetProperty(nameof(SalesOrderDetail.OrderQty))
+            .AddAttributes(new AliasAttribute("orderqty"));
+
+
 
     }
 }

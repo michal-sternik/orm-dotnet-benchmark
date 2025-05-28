@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Individual products associated with a specific sales order. See SalesOrderHeader.
 /// </summary>
+[Schema("Sales")]
 public partial class SalesOrderDetail
 {
     /// <summary>
@@ -66,4 +68,5 @@ public partial class SalesOrderDetail
     public virtual SalesOrderHeader SalesOrder { get; set; } = null!;
 
     public virtual SpecialOfferProduct SpecialOfferProduct { get; set; } = null!;
+    public virtual Product Product { get; set; }
 }

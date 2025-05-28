@@ -37,7 +37,7 @@ namespace OrmBenchmarkMag
             //}
 
             //BenchmarkRunner.Run<SelectPeopleBenchmarkMssql>();
-            BenchmarkRunner.Run<SelectCustomersWithOrdersBenchmarkPostgres>();
+            BenchmarkRunner.Run<SelectOrderAndCustomerInformationsBenchmarkMssql>();
         }
     }
 }

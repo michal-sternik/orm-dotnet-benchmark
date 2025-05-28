@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Products sold or used in the manfacturing of sold products.
 /// </summary>
+[Schema("Production")]
 public partial class Product
 {
     /// <summary>

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// High-level product categorization.
 /// </summary>
+[Schema("Production")]
 public partial class ProductCategory
 {
     /// <summary>

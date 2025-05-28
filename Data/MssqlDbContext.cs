@@ -1740,7 +1740,11 @@ public partial class MssqlDbContext : DbContext
                 .HasForeignKey(d => new { d.SpecialOfferId, d.ProductId })
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_SalesOrderDetail_SpecialOfferProduct_SpecialOfferIDProductID");
-        });
+
+            entity.HasOne(sod => sod.Product)
+                .WithMany()
+                .HasForeignKey(sod => sod.ProductId);
+                });
 
         modelBuilder.Entity<SalesOrderHeader>(entity =>
         {

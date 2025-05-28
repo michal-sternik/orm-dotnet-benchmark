@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Unit of measure lookup table.
 /// </summary>
+[Schema("Production")]
 public partial class UnitMeasure
 {
     /// <summary>
