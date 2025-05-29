@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using OrmBenchmarkMag.Data;
 using OrmBenchmarkMag.Models;
 using OrmBenchmarkThesis.Benchmarks;
+using OrmBenchmarkMag.Benchmarks;
 
 
 namespace OrmBenchmarkMag
@@ -37,7 +38,7 @@ namespace OrmBenchmarkMag
             //}
 
             //BenchmarkRunner.Run<SelectPeopleBenchmarkMssql>();
-            BenchmarkRunner.Run<SelectOrderAndCustomerInformationsBenchmarkMssql>();
+            BenchmarkRunner.Run<NumberOfPeopleOnShiftsBenchmarkPostgres>();
         }
     }
 }

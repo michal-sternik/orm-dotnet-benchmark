@@ -69,4 +69,5 @@ public partial class SalesOrderDetail
 
     public virtual SpecialOfferProduct SpecialOfferProduct { get; set; } = null!;
     public virtual Product Product { get; set; }
+    
 }

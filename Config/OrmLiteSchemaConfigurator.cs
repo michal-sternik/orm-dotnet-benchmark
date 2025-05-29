@@ -75,6 +75,10 @@ public static class OrmLiteSchemaConfigurator
         typeof(SalesOrderHeader)
             .GetProperty(nameof(SalesOrderHeader.ShipToAddressId))
             .AddAttributes(new AliasAttribute("shiptoaddressid"));
+        typeof(SalesOrderHeader)
+            .GetProperty(nameof(SalesOrderHeader.TotalDue))
+            .AddAttributes(new AliasAttribute("totaldue"));
+
 
         // Address
         typeof(Address).AddAttributes(new SchemaAttribute("person"));
@@ -153,6 +157,15 @@ public static class OrmLiteSchemaConfigurator
         typeof(SalesOrderDetail)
             .GetProperty(nameof(SalesOrderDetail.OrderQty))
             .AddAttributes(new AliasAttribute("orderqty"));
+
+        typeof(Shift).AddAttributes(new SchemaAttribute("humanresources"));
+        typeof(Shift).GetProperty(nameof(Shift.Name)).AddAttributes(new AliasAttribute("name"));
+        typeof(Shift).GetProperty(nameof(Shift.ShiftId)).AddAttributes(new AliasAttribute("shiftid"));
+
+        typeof(EmployeeDepartmentHistory).AddAttributes(new SchemaAttribute("humanresources"));
+        typeof(EmployeeDepartmentHistory).GetProperty(nameof(EmployeeDepartmentHistory.BusinessEntityId)).AddAttributes(new AliasAttribute("businessentityid"));
+        typeof(EmployeeDepartmentHistory).GetProperty(nameof(EmployeeDepartmentHistory.ShiftId)).AddAttributes(new AliasAttribute("shiftid"));
+
 
 
 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using ServiceStack.DataAnnotations;
 
 namespace OrmBenchmarkMag.Models;
 
 /// <summary>
 /// Work shift lookup table.
 /// </summary>
+[Schema("HumanResources")]
 public partial class Shift
 {
     /// <summary>
