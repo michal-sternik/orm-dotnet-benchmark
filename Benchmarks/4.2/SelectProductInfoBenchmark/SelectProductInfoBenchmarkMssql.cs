@@ -6,6 +6,7 @@ using OrmBenchmarkMag.Config;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 using ServiceStack.OrmLite;
+using SqlSugar;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +25,70 @@ namespace OrmBenchmarkThesis.Benchmarks
             FluentMapper.Entity<UnitMeasure>().Table("Production.UnitMeasure");
         }
 
-        
+        private IFreeSql _freeSqlMssql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSqlMssql()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<ProductInfoDto> FreeSql_MSSQL()
+        {
+            return _freeSqlMssql.Ado.Query<ProductInfoDto>(@"
+                SELECT 
+                    p.Name AS ProductName,
+                    pc.Name AS Category,
+                    psc.Name AS Subcategory,
+                    CONCAT(wu.Name, '/', su.Name) AS Units
+                FROM Production.Product p
+                JOIN Production.ProductSubcategory psc ON p.ProductSubcategoryID = psc.ProductSubcategoryID
+                JOIN Production.ProductCategory pc ON psc.ProductCategoryID = pc.ProductCategoryID
+                LEFT JOIN Production.UnitMeasure wu ON p.WeightUnitMeasureCode = wu.UnitMeasureCode
+                LEFT JOIN Production.UnitMeasure su ON p.SizeUnitMeasureCode = su.UnitMeasureCode
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<ProductInfoDto> SqlSugar_MSSQL()
+        {
+            var list = _sqlSugarClient.Queryable<Product>()
+                .LeftJoin<ProductSubcategory>((p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
+                .LeftJoin<ProductCategory>((p, psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
+                .LeftJoin<UnitMeasure>((p, psc, pc, wu) => p.WeightUnitMeasureCode == wu.UnitMeasureCode)
+                .LeftJoin<UnitMeasure>((p, psc, pc, wu, su) => p.SizeUnitMeasureCode == su.UnitMeasureCode)
+                .Select((p, psc, pc, wu, su) => new ProductInfoDto
+                {
+                    ProductName = p.Name,
+                    Category = pc.Name,
+                    Subcategory = psc.Name,
+                    Units = (wu.Name ?? "") + "/" + (su.Name ?? "")
+                })
+                .ToList();
+
+            return list;
+        }
+
 
         [Benchmark]
         public List<ProductInfoDto> Dapper_MSSQL()

@@ -8,6 +8,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using OrmBenchmarkMag.Benchmarks;
 using ServiceStack.OrmLite;
+using SqlSugar;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -15,6 +16,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectCustomersWithOrdersBenchmarkPostgres : OrmBenchmarkBase
     {
+        private SqlSugarClient _sqlSugarClient;
+
         [GlobalSetup(Target = nameof(RepoDb_Postgres))]
         public void SetupRepoDbPostgres()
         {
@@ -27,6 +30,64 @@ namespace OrmBenchmarkThesis.Benchmarks
             OrmLiteSchemaConfigurator.ConfigureMappings();
         }
 
+        private IFreeSql _freeSqlPostgres;
+
+        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        public void SetupFreeSqlPostgres()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<CustomerWithOrdersDto> FreeSql_Postgres()
+        {
+            return _freeSqlPostgres.Ado.Query<CustomerWithOrdersDto>(@"
+                SELECT c.customerid, a.addressline1, sp.name AS stateprovince, p.firstname, p.lastname
+                FROM sales.customer c 
+                JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+                JOIN person.address a ON soh.billtoaddressid = a.addressid
+                JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+                JOIN person.person p ON c.personid = p.businessentityid
+            ").ToList();
+        }
+
+
+        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<CustomerWithOrdersDto> SqlSugar_Postgres()
+        {
+            var list = _sqlSugarClient.Queryable<Customer>()
+                .LeftJoin<SalesOrderHeader>((c, soh) => c.CustomerId == soh.CustomerId)
+                .LeftJoin<Address>((c, soh, a) => soh.BillToAddressId == a.AddressId)
+                .LeftJoin<StateProvince>((c, soh, a, sp) => a.StateProvinceId == sp.StateProvinceId)
+                .LeftJoin<Person>((c, soh, a, sp, p) => c.PersonId == p.BusinessEntityId)
+                .Select((c, soh, a, sp, p) => new CustomerWithOrdersDto
+                {
+                    CustomerID = c.CustomerId,
+                    AddressLine1 = a.AddressLine1,
+                    StateProvince = sp.Name,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName
+                })
+                .ToList();
+
+            return list;
+        }
 
         [Benchmark]
         public List<CustomerWithOrdersDto> Dapper_Postgres()
@@ -42,26 +103,28 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .ToList();
         }
 
-        [Benchmark]
-        [InvocationCount(1)]
-        public List<CustomerWithOrdersDto> EFCore_Postgres()
-        {
-            using var context = CreatePostgresContext();
-            return context.Customers
-                .Include(c => c.Person)
-                .Include(c => c.SalesOrderHeaders)
-                    .ThenInclude(soh => soh.BillToAddress)
-                        .ThenInclude(addr => addr.StateProvince)
-                .Select(c => new CustomerWithOrdersDto
-                {
-                    CustomerID = c.CustomerId,
-                    AddressLine1 = c.SalesOrderHeaders.FirstOrDefault().BillToAddress.AddressLine1,
-                    StateProvince = c.SalesOrderHeaders.FirstOrDefault().BillToAddress.StateProvince.Name,
-                    FirstName = c.Person.FirstName,
-                    LastName = c.Person.LastName
-                })
-                .ToList();
-        }
+        //[Benchmark]
+        ////to sie robi za dlugo
+        //[InvocationCount(1)]
+        //[WarmupCount(1)]
+        //public List<CustomerWithOrdersDto> EFCore_Postgres()
+        //{
+        //    using var context = CreatePostgresContext();
+        //    return context.Customers
+        //        .Include(c => c.Person)
+        //        .Include(c => c.SalesOrderHeaders)
+        //            .ThenInclude(soh => soh.BillToAddress)
+        //                .ThenInclude(addr => addr.StateProvince)
+        //        .Select(c => new CustomerWithOrdersDto
+        //        {
+        //            CustomerID = c.CustomerId,
+        //            AddressLine1 = c.SalesOrderHeaders.FirstOrDefault().BillToAddress.AddressLine1,
+        //            StateProvince = c.SalesOrderHeaders.FirstOrDefault().BillToAddress.StateProvince.Name,
+        //            FirstName = c.Person.FirstName,
+        //            LastName = c.Person.LastName
+        //        })
+        //        .ToList();
+        //}
 
         [Benchmark]
         public List<CustomerWithOrdersDto> RepoDb_Postgres()

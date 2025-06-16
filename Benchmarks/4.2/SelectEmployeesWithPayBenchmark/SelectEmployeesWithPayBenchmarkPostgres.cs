@@ -10,6 +10,8 @@ using OrmBenchmarkMag.Benchmarks;
 using ServiceStack.OrmLite;
 using ServiceStack.DataAnnotations;
 using ServiceStack;
+using SqlSugar;
+using FreeSql;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -17,6 +19,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectEmployeesWithPayBenchmarkPostgres : OrmBenchmarkBase
     {
+        private SqlSugarClient _sqlSugarClient;
+
         [GlobalSetup(Target = nameof(RepoDb_Postgres))]
         public void SetupRepoDbPostgres()
         {
@@ -28,6 +32,69 @@ namespace OrmBenchmarkThesis.Benchmarks
         {
             OrmLiteSchemaConfigurator.ConfigureMappings();
         }
+
+        private IFreeSql _freeSqlPostgres;
+
+        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        public void SetupFreeSqlPostgres()
+        {
+            _freeSqlPostgres = new FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<EmployeeWithPayDto> FreeSql_Postgres()
+        {
+            return _freeSqlPostgres.Ado.Query<EmployeeWithPayDto>(@"
+                SELECT e.businessentityid, p.firstname, p.lastname, e.jobtitle, d.name AS department, ep.rate
+                FROM humanresources.employee e
+                JOIN humanresources.employeepayhistory ep ON e.businessentityid = ep.businessentityid
+                JOIN person.person p ON e.businessentityid = p.businessentityid
+                JOIN humanresources.employeedepartmenthistory edh ON e.businessentityid = edh.businessentityid
+                JOIN humanresources.department d ON edh.departmentid = d.departmentid
+            ").ToList();
+        }
+
+        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString, 
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+        }
+
+
+        [Benchmark]
+        public List<EmployeeWithPayDto> SqlSugar_Postgres()
+        {
+
+
+            var list = _sqlSugarClient.Queryable<Employee>()
+                .LeftJoin<EmployeePayHistory>((e, ep) => e.BusinessEntityId == ep.BusinessEntityId)
+                .LeftJoin<Person>((e, ep, p) => e.BusinessEntityId == p.BusinessEntityId)
+                .LeftJoin<EmployeeDepartmentHistory>((e, ep, p, edh) => e.BusinessEntityId == edh.BusinessEntityId)
+                .LeftJoin<Department>((e, ep, p, edh, d) => edh.DepartmentId == d.DepartmentId)
+                .Select((e, ep, p, edh, d) => new EmployeeWithPayDto
+                {
+                    BusinessEntityId = e.BusinessEntityId,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    JobTitle = e.JobTitle,
+                    Department = d.Name,
+                    Rate = ep.Rate
+                })
+                .ToList();
+
+            return list;
+        }
+
 
         [Benchmark]
         public List<EmployeeWithPayDto> EFCore_Postgres()

@@ -11,6 +11,9 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
     <PackageReference Include="BenchmarkDotNet.Exporters.Plotting" Version="0.14.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="FreeSql" Version="3.5.207" />
+    <PackageReference Include="FreeSql.Provider.PostgreSQL" Version="3.5.207" />
+    <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.5.207" />
     <PackageReference Include="linq2db" Version="5.4.1" />
     <PackageReference Include="linq2db.PostgreSQL" Version="5.4.1" />
     <PackageReference Include="linq2db.SqlServer" Version="5.4.1" />
@@ -27,6 +30,7 @@
     <PackageReference Include="ServiceStack.OrmLite" Version="8.7.0" />
     <PackageReference Include="ServiceStack.OrmLite.PostgreSQL" Version="8.7.0" />
     <PackageReference Include="ServiceStack.OrmLite.SqlServer" Version="8.7.0" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.196" />
   </ItemGroup>
 
 </Project>

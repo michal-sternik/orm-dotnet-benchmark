@@ -23,7 +23,7 @@ namespace OrmBenchmarkMag.Config
             AddJob(Job.MediumRun
                 .WithLaunchCount(1) 
                 .WithWarmupCount(5)
-                .WithIterationCount(10)
+                .WithIterationCount(3)
                 //dla krotko trwajacych queries - zwracajacych max 1000 rekordow
                 //.WithInvocationCount(1000)
                 //dla bardziej wymagajacych queries, ponad 1k, do 120k

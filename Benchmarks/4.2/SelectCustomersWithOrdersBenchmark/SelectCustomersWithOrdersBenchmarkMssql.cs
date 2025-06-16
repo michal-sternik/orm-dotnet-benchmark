@@ -10,6 +10,7 @@ using OrmBenchmarkMag.Benchmarks;
 using LinqToDB;
 using ServiceStack.OrmLite;
 using LinqToDB.Reflection;
+using SqlSugar;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -17,6 +18,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectCustomersWithOrdersBenchmarkMssql : OrmBenchmarkBase
     {
+        private SqlSugarClient _sqlSugarClient;
+
         [GlobalSetup(Target = nameof(RepoDb_MSSQL))]
         public void SetupRepoDbMssql()
         {
@@ -28,8 +31,64 @@ namespace OrmBenchmarkThesis.Benchmarks
             FluentMapper.Entity<Person>().Table("Person.Person");
         }
 
+        private IFreeSql _freeSqlMssql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSqlMssql()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<CustomerWithOrdersDto> FreeSql_MSSQL()
+        {
+            return _freeSqlMssql.Ado.Query<CustomerWithOrdersDto>(@"
+                SELECT c.CustomerID, a.AddressLine1, sp.Name AS StateProvince, p.FirstName, p.LastName
+                FROM Sales.Customer c 
+                JOIN Sales.SalesOrderHeader soh ON c.CustomerID = soh.CustomerID
+                JOIN Person.Address a ON soh.BillToAddressID = a.AddressID
+                JOIN Person.StateProvince sp ON a.StateProvinceID = sp.StateProvinceID
+                JOIN Person.Person p ON c.PersonID = p.BusinessEntityID
+            ").ToList();
+        }
 
 
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<CustomerWithOrdersDto> SqlSugar_MSSQL()
+        {
+            var list = _sqlSugarClient.Queryable<Customer>()
+                .LeftJoin<SalesOrderHeader>((c, soh) => c.CustomerId == soh.CustomerId)
+                .LeftJoin<Address>((c, soh, a) => soh.BillToAddressId == a.AddressId)
+                .LeftJoin<StateProvince>((c, soh, a, sp) => a.StateProvinceId == sp.StateProvinceId)
+                .LeftJoin<Person>((c, soh, a, sp, p) => c.PersonId == p.BusinessEntityId)
+                .Select((c, soh, a, sp, p) => new CustomerWithOrdersDto
+                {
+                    CustomerID = c.CustomerId,
+                    AddressLine1 = a.AddressLine1,
+                    StateProvince = sp.Name,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName
+                })
+                .ToList();
+
+            return list;
+        }
 
         //dla ormlite dla tych dwoch benchmarkow czas jest praktycznie identyczny.
         [Benchmark]

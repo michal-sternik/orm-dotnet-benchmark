@@ -6,6 +6,7 @@ using OrmBenchmarkMag.Config;
 using OrmBenchmarkMag.Models;
 using ServiceStack.OrmLite;
 using OrmBenchmarkMag.Benchmarks;
+using SqlSugar;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -24,6 +25,72 @@ namespace OrmBenchmarkThesis.Benchmarks
             FluentMapper.Entity<Address>().Table("Person.Address");
         }
 
+        private IFreeSql _freeSqlMssql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSqlMssql()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<OrderProductDetailDto> FreeSql_MSSQL()
+        {
+            return _freeSqlMssql.Ado.Query<OrderProductDetailDto>(@"
+                SELECT soh.SalesOrderID, p.Name AS ProductName, sod.OrderQty, pe.FirstName, pe.LastName, c.AccountNumber, a.City
+                FROM Sales.SalesOrderHeader soh
+                JOIN Sales.SalesOrderDetail sod ON soh.SalesOrderID = sod.SalesOrderID
+                JOIN Production.Product p ON sod.ProductID = p.ProductID
+                JOIN Sales.Customer c ON soh.CustomerID = c.CustomerID
+                LEFT JOIN Person.Person pe ON c.CustomerID = pe.BusinessEntityID
+                JOIN Person.Address a ON soh.ShipToAddressID = a.AddressID
+                ORDER BY soh.SalesOrderID
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<OrderProductDetailDto> SqlSugar_MSSQL()
+        {
+            var list = _sqlSugarClient.Queryable<SalesOrderHeader>()
+                .LeftJoin<SalesOrderDetail>((soh, sod) => soh.SalesOrderId == sod.SalesOrderId)
+                .LeftJoin<Product>((soh, sod, p) => sod.ProductId == p.ProductId)
+                .LeftJoin<Customer>((soh, sod, p, c) => soh.CustomerId == c.CustomerId)
+                .LeftJoin<Person>((soh, sod, p, c, pe) => c.CustomerId == pe.BusinessEntityId)
+                .LeftJoin<Address>((soh, sod, p, c, pe, a) => soh.ShipToAddressId == a.AddressId)
+                .OrderBy((soh, sod, p, c, pe, a) => soh.SalesOrderId)
+                .Select((soh, sod, p, c, pe, a) => new OrderProductDetailDto
+                {
+                    SalesOrderId = soh.SalesOrderId,
+                    ProductName = p.Name,
+                    OrderQty = sod.OrderQty,
+                    FirstName = pe.FirstName,
+                    LastName = pe.LastName,
+                    AccountNumber = c.AccountNumber,
+                    City = a.City
+                })
+                .ToList();
+
+            return list;
+        }
 
         [Benchmark]
         public List<OrderProductDetailDto> Dapper_MSSQL()

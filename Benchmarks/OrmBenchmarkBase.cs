@@ -7,6 +7,7 @@ using OrmBenchmarkMag.Data;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 using ServiceStack.OrmLite;
+using SqlSugar;
 
 
 namespace OrmBenchmarkMag.Benchmarks
@@ -77,6 +78,27 @@ namespace OrmBenchmarkMag.Benchmarks
         protected IDbConnection CreateOrmLiteMssqlConnection() => _mssqlOrmLiteFactory.OpenDbConnection();
         protected IDbConnection CreateOrmLitePostgresConnection() => _postgresOrmLiteFactory.OpenDbConnection();
 
+        //protected SqlSugarClient CreateSqlSugarMssqlClient()
+        //{
+        //    return new SqlSugarClient(new ConnectionConfig
+        //    {
+        //        ConnectionString = MssqlConnectionString,
+        //        DbType = SqlSugar.DbType.SqlServer,
+        //        IsAutoCloseConnection = true,
+        //        InitKeyType = InitKeyType.Attribute
+        //    });
+        //}
+
+        //protected SqlSugarClient CreateSqlSugarPostgresClient()
+        //{
+        //    return new SqlSugarClient(new ConnectionConfig
+        //    {
+        //        ConnectionString = PostgresConnectionString,
+        //        DbType = SqlSugar.DbType.PostgreSQL,
+        //        IsAutoCloseConnection = true,
+        //        InitKeyType = InitKeyType.SystemTable
+        //    });
+        //}
     }
 }
 
@@ -87,6 +109,8 @@ public class PostgreSqlNamingStrategy : OrmLiteNamingStrategyBase
     public override string GetSchemaName(string name) => name?.ToLower();
 
 }
+
+
 
 //using BenchmarkDotNet.Attributes;
 //using Microsoft.EntityFrameworkCore;
@@ -118,3 +142,4 @@ public class PostgreSqlNamingStrategy : OrmLiteNamingStrategyBase
 
 //    }
 //}
+ 

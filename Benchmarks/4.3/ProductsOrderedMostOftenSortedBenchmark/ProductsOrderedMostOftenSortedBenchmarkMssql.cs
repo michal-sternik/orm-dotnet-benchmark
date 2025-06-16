@@ -6,6 +6,7 @@ using OrmBenchmarkMag.Data;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 using ServiceStack.OrmLite;
+using SqlSugar;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,6 +17,71 @@ namespace OrmBenchmarkMag.Benchmarks
     [MemoryDiagnoser]
     public class ProductsOrderedMostOftenSortedBenchmarkMssql : OrmBenchmarkBase
     {
+        private IFreeSql _freeSqlMssql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSqlMssql()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<ProductOrderSummaryDto> FreeSql_MSSQL()
+        {
+            return _freeSqlMssql.Ado.Query<ProductOrderSummaryDto>(@"
+                SELECT 
+                  pc.Name AS Category, psc.Name AS Subcategory, p.Name AS ProductName,
+                  SUM(sod.OrderQty) AS TotalQty
+                FROM Sales.SalesOrderDetail sod
+                JOIN Production.Product p ON sod.ProductID = p.ProductID
+                JOIN Production.ProductSubcategory psc ON p.ProductSubcategoryID = psc.ProductSubcategoryID
+                JOIN Production.ProductCategory pc ON psc.ProductCategoryID = pc.ProductCategoryID
+                GROUP BY pc.Name, psc.Name, p.Name
+                ORDER BY TotalQty DESC
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<ProductOrderSummaryDto> SqlSugar_MSSQL()
+        {
+            var list = _sqlSugarClient.Queryable<SalesOrderDetail>()
+                .LeftJoin<Product>((sod, p) => sod.ProductId == p.ProductId)
+                .LeftJoin<ProductSubcategory>((sod, p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
+                .LeftJoin<ProductCategory>((sod, p, psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
+                .GroupBy((sod, p, psc, pc) => new { Category = pc.Name, Subcategory = psc.Name, ProductName = p.Name })
+                .OrderBy("SUM(sod.OrderQty) DESC")
+                .Select<dynamic>("pc.Name AS Category, psc.Name AS Subcategory, p.Name AS ProductName, SUM(sod.OrderQty) AS TotalQty")
+                .ToList();
+
+            return list.Select(x => new ProductOrderSummaryDto
+            {
+                Category = x.Category,
+                Subcategory = x.Subcategory,
+                ProductName = x.ProductName,
+                TotalQty = Convert.ToInt32(x.TotalQty)
+            }).ToList();
+        }
+
+
         [Benchmark]
         public List<ProductOrderSummaryDto> EFCore_MSSQL_WithJoins()
         {

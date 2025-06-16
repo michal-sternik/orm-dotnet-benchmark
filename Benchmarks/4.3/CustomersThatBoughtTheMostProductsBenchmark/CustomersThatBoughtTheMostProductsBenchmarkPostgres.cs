@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using OrmBenchmarkMag.Config;
 using OrmBenchmarkMag.Models;
 using OrmBenchmarkMag.Benchmarks;
+using SqlSugar;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -18,6 +19,70 @@ namespace OrmBenchmarkThesis.Benchmarks
 
         [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
         public void SetupOrmLite() => OrmLiteSchemaConfigurator.ConfigureMappings();
+
+        private IFreeSql _freeSqlPostgres;
+
+        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        public void SetupFreeSqlPostgres()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<CustomerProductCountDto> FreeSql_Postgres()
+        {
+            return _freeSqlPostgres.Ado.Query<CustomerProductCountDto>(@"
+                SELECT c.customerid, COUNT(sod.productid) AS productcount
+                FROM sales.salesorderdetail sod
+                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
+                JOIN sales.customer c ON soh.customerid = c.customerid
+                GROUP BY c.customerid
+                HAVING COUNT(sod.productid) > 10
+                ORDER BY productcount DESC
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<CustomerProductCountDto> SqlSugar_Postgres()
+        {
+            var list = _sqlSugarClient.Queryable<SalesOrderDetail>()
+                .LeftJoin<SalesOrderHeader>((sod, soh) => sod.SalesOrderId == soh.SalesOrderId)
+                .LeftJoin<Customer>((sod, soh, c) => soh.CustomerId == c.CustomerId)
+                .GroupBy((sod, soh, c) => c.CustomerId)
+                .Having("COUNT(sod.ProductId) > 10 ")
+                .OrderBy("COUNT(sod.ProductId) DESC")
+                .Select<dynamic>("c.CustomerId, COUNT(sod.ProductId) AS ProductCount")
+                .ToList();
+
+            return list.Select(x => new CustomerProductCountDto
+            {
+                CustomerId = Convert.ToInt32(x.customerid),
+                ProductCount = Convert.ToInt32(x.productcount)
+            }).ToList();
+        }
+
+
+
+
 
         [Benchmark]
         public List<CustomerProductCountDto> EFCore_Postgres()

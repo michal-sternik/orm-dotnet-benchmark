@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ServiceStack.DataAnnotations;
+using SqlSugar;
 
 namespace OrmBenchmarkMag.Models;
 
@@ -8,6 +9,7 @@ namespace OrmBenchmarkMag.Models;
 /// Lookup table containing the departments within the Adventure Works Cycles company.
 /// </summary>
 [Schema("HumanResources")]
+//[SugarTable("HumanResources.Department")]
 public partial class Department
 {
     /// <summary>

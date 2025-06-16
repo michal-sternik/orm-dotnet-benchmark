@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ServiceStack.DataAnnotations;
+using SqlSugar;
 
 namespace OrmBenchmarkMag.Models;
 
@@ -8,6 +9,7 @@ namespace OrmBenchmarkMag.Models;
 /// Employee department transfers.
 /// </summary>
 [Schema("HumanResources")]
+//[SugarTable("HumanResources.EmployeeDepartmentHistory")]
 public partial class EmployeeDepartmentHistory
 {
     /// <summary>

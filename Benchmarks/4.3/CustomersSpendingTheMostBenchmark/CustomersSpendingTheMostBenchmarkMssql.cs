@@ -5,6 +5,7 @@ using ServiceStack.OrmLite;
 using Microsoft.EntityFrameworkCore;
 using OrmBenchmarkMag.Config;
 using OrmBenchmarkMag.Models;
+using SqlSugar;
 
 namespace OrmBenchmarkMag.Benchmarks
 {
@@ -12,7 +13,68 @@ namespace OrmBenchmarkMag.Benchmarks
     [MemoryDiagnoser]
     public class CustomersSpendingTheMostBenchmarkMssql : OrmBenchmarkBase
     {
-       
+        private IFreeSql _freeSqlMssql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSqlMssql()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<CustomerSpendingDto> FreeSql_MSSQL()
+        {
+            return _freeSqlMssql.Ado.Query<CustomerSpendingDto>(@"
+                SELECT 
+                    c.CustomerID, 
+                    a.City AS Region, 
+                    SUM(soh.TotalDue) AS TotalSpent
+                FROM Sales.SalesOrderHeader soh
+                JOIN Sales.Customer c ON soh.CustomerID = c.CustomerID
+                JOIN Person.Address a ON soh.BillToAddressID = a.AddressID
+                GROUP BY c.CustomerID, a.City
+                ORDER BY TotalSpent DESC
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<CustomerSpendingDto> SqlSugar_MSSQL()
+        {
+            var list = _sqlSugarClient.Queryable<SalesOrderHeader>()
+                .LeftJoin<Customer>((soh, c) => soh.CustomerId == c.CustomerId)
+                .LeftJoin<Address>((soh, c, a) => soh.BillToAddressId == a.AddressId)
+                .GroupBy((soh, c, a) => new { c.CustomerId, a.City })
+                .OrderBy((soh, c, a) => SqlFunc.AggregateSum(soh.TotalDue), OrderByType.Desc)
+                .Select((soh, c, a) => new CustomerSpendingDto
+                {
+                    CustomerId = c.CustomerId,
+                    Region = a.City,
+                    TotalSpent = SqlFunc.AggregateSum(soh.TotalDue)
+                })
+                .ToList();
+
+            return list;
+        }
+
 
         [Benchmark]
         public List<CustomerSpendingDto> EFCore_MSSQL_WithJoins()

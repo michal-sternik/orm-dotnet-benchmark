@@ -62,6 +62,18 @@
               "target": "Package",
               "version": "[2.1.66, )"
             },
+            "FreeSql": {
+              "target": "Package",
+              "version": "[3.5.207, )"
+            },
+            "FreeSql.Provider.PostgreSQL": {
+              "target": "Package",
+              "version": "[3.5.207, )"
+            },
+            "FreeSql.Provider.SqlServer": {
+              "target": "Package",
+              "version": "[3.5.207, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[9.0.2, )"
@@ -103,6 +115,10 @@
             "ServiceStack.OrmLite.SqlServer": {
               "target": "Package",
               "version": "[8.7.0, )"
+            },
+            "SqlSugarCore": {
+              "target": "Package",
+              "version": "[5.1.4.196, )"
             },
             "linq2db": {
               "target": "Package",

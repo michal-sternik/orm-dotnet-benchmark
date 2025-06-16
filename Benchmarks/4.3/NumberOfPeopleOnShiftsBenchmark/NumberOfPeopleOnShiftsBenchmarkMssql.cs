@@ -7,6 +7,7 @@ using OrmBenchmarkMag.Config;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 using ServiceStack.OrmLite;
+using SqlSugar;
 
 namespace OrmBenchmarkMag.Benchmarks
 {
@@ -14,6 +15,63 @@ namespace OrmBenchmarkMag.Benchmarks
     [MemoryDiagnoser]
     public class NumberOfPeopleOnShiftsBenchmarkMssql : OrmBenchmarkBase
     {
+        private IFreeSql _freeSqlMssql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSqlMssql()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<ShiftWithEmployeeCountDto> FreeSql_MSSQL()
+        {
+            return _freeSqlMssql.Ado.Query<ShiftWithEmployeeCountDto>(@"
+                SELECT s.name AS ShiftName, COUNT(edh.businessentityid) AS EmployeeCount
+                FROM humanresources.employeedepartmenthistory edh
+                JOIN humanresources.shift s ON edh.shiftid = s.shiftid
+                GROUP BY s.name
+                ORDER BY EmployeeCount DESC
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<ShiftWithEmployeeCountDto> SqlSugar_MSSQL()
+        {
+            var list = _sqlSugarClient.Queryable<EmployeeDepartmentHistory>()
+                .LeftJoin<Shift>((edh, s) => edh.ShiftId == s.ShiftId)
+                .GroupBy((edh, s) => s.Name)
+                .OrderBy("COUNT(edh.BusinessEntityId) DESC")
+                .Select<dynamic>("s.Name AS ShiftName, COUNT(edh.BusinessEntityId) AS EmployeeCount")
+                .ToList();
+
+            return list.Select(x => new ShiftWithEmployeeCountDto
+            {
+                ShiftName = x.ShiftName,
+                EmployeeCount = Convert.ToInt32(x.EmployeeCount)
+            }).ToList();
+        }
+
+
         [Benchmark]
         public List<ShiftWithEmployeeCountDto> EFCore_MSSQL_WithJoin()
         {

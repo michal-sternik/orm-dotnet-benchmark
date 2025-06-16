@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using ServiceStack.OrmLite;
 using LinqToDB;
 using OrmBenchmarkMag.Benchmarks;
+using SqlSugar;
+using FreeSql;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -16,6 +18,9 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectEmployeesWithPayBenchmarkMssql : OrmBenchmarkBase
     {
+        private SqlSugarClient _sqlSugarClient;
+
+
         [GlobalSetup(Target = nameof(RepoDb_MSSQL))]
         public void SetupRepoDbMssql()
         {
@@ -25,6 +30,77 @@ namespace OrmBenchmarkThesis.Benchmarks
             FluentMapper.Entity<EmployeeDepartmentHistory>().Table("HumanResources.EmployeeDepartmentHistory");
             FluentMapper.Entity<Department>().Table("HumanResources.Department");
         }
+
+
+        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString, // lub MSSQLConnectionString
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+        }
+
+        private IFreeSql _freeSql;
+
+        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        public void SetupFreeSql()
+        {
+            _freeSql = new FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false) 
+                .Build();
+
+            
+        }
+
+
+        [Benchmark]
+        public List<EmployeeWithPayDto> FreeSql_MSSQL()
+        {
+            return _freeSql.Ado.Query<EmployeeWithPayDto>(@"
+                SELECT e.BusinessEntityID, p.FirstName, p.LastName, e.JobTitle, d.Name AS Department, ep.Rate
+                FROM HumanResources.Employee e
+                JOIN HumanResources.EmployeePayHistory ep ON e.BusinessEntityID = ep.BusinessEntityID
+                JOIN Person.Person p ON e.BusinessEntityID = p.BusinessEntityID
+                JOIN HumanResources.EmployeeDepartmentHistory edh ON e.BusinessEntityID = edh.BusinessEntityID
+                JOIN HumanResources.Department d ON edh.DepartmentID = d.DepartmentID")
+                .ToList();
+        }
+
+
+
+
+        [Benchmark]
+        public List<EmployeeWithPayDto> SqlSugar_MSSQL()
+        {
+            //using var db = CreateSqlSugarMssqlClient();
+
+            // Zakładam, że masz klasy modelowe: Employee, EmployeePayHistory itd.
+            // Mapowanie property do kolumny nie musi mieć atrybutów.
+            var list = _sqlSugarClient.Queryable<Employee>()
+                .LeftJoin<EmployeePayHistory>((e, ep) => e.BusinessEntityId == ep.BusinessEntityId)
+                .LeftJoin<Person>((e, ep, p) => e.BusinessEntityId == p.BusinessEntityId)
+                .LeftJoin<EmployeeDepartmentHistory>((e, ep, p, edh) => e.BusinessEntityId == edh.BusinessEntityId)
+                .LeftJoin<Department>((e, ep, p, edh, d) => edh.DepartmentId == d.DepartmentId)
+                .Select((e, ep, p, edh, d) => new EmployeeWithPayDto
+                {
+                    BusinessEntityId = e.BusinessEntityId,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    JobTitle = e.JobTitle,
+                    Department = d.Name,
+                    Rate = ep.Rate
+                })
+                .ToList();
+
+            return list;
+        }
+
 
         [Benchmark]
         public List<EmployeeWithPayDto> OrmLite_MSSQL_LinqStyle()

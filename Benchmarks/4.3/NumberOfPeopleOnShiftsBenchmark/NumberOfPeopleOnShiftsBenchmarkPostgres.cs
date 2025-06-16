@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using OrmBenchmarkMag.Config;
 using OrmBenchmarkMag.Models;
 using OrmBenchmarkMag.Benchmarks;
+using SqlSugar;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -18,6 +19,63 @@ namespace OrmBenchmarkThesis.Benchmarks
 
         [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
         public void SetupOrmLite() => OrmLiteSchemaConfigurator.ConfigureMappings();
+
+        private IFreeSql _freeSqlPostgres;
+
+        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        public void SetupFreeSqlPostgres()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+        }
+
+        [Benchmark]
+        public List<ShiftWithEmployeeCountDto> FreeSql_Postgres()
+        {
+            return _freeSqlPostgres.Ado.Query<ShiftWithEmployeeCountDto>(@"
+                SELECT s.name AS ShiftName, COUNT(edh.businessentityid) AS EmployeeCount
+                FROM humanresources.employeedepartmenthistory edh
+                JOIN humanresources.shift s ON edh.shiftid = s.shiftid
+                GROUP BY s.name
+                ORDER BY EmployeeCount DESC
+            ").ToList();
+        }
+
+
+        private SqlSugarClient _sqlSugarClient;
+
+        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        public void SetupSqlSugar()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+        }
+
+        [Benchmark]
+        public List<ShiftWithEmployeeCountDto> SqlSugar_Postgres()
+        {
+            var list = _sqlSugarClient.Queryable<EmployeeDepartmentHistory>()
+                .LeftJoin<Shift>((edh, s) => edh.ShiftId == s.ShiftId)
+                .GroupBy((edh, s) => s.Name)
+                .OrderBy("COUNT(edh.businessentityid) DESC")
+                .Select<dynamic>("s.name AS shiftname, COUNT(edh.businessentityid) AS employeecount")
+                .ToList();
+
+            return list.Select(x => new ShiftWithEmployeeCountDto
+            {
+                ShiftName = x.shiftname,
+                EmployeeCount = Convert.ToInt32(x.employeecount)
+            }).ToList();
+        }
+
 
         [Benchmark]
         public List<ShiftWithEmployeeCountDto> EFCore_Postgres_WithJoin()

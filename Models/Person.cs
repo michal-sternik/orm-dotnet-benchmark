@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LinqToDB.Mapping;
 using ServiceStack.DataAnnotations;
+using SqlSugar;
 
 namespace OrmBenchmarkMag.Models;
 
@@ -10,6 +11,7 @@ namespace OrmBenchmarkMag.Models;
 /// </summary>
 [Table(Schema = "Person", Name = "Person")]
 [Schema("Person")]
+//[SugarTable("Person.Person")]
 public partial class Person
 {
     /// <summary>
