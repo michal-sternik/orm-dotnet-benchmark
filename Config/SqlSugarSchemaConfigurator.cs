@@ -41,11 +41,12 @@ public static class SqlSugarSchemaConfigurator
         db.MappingTables.Add(typeof(Address).Name, "Person.Address");
         db.MappingTables.Add(typeof(StateProvince).Name, "Person.StateProvince");
         db.MappingTables.Add(typeof(Shift).Name, "HumanResources.Shift");
+        db.MappingTables.Add(typeof(CreditCard).Name, "Sales.CreditCard");
+        db.MappingTables.Add(typeof(PersonCreditCard).Name, "Sales.PersonCreditCard");
 
         // MAPPING KOLUMN na lower-case (jeśli trzeba, np. bo masz property "BusinessEntityId", a w PG kolumna to "businessentityid")  
         //db.MappingColumns.Add("BusinessEntityId", typeof(Employee).Name, "businessentityid");
         //db.MappingColumns.Add("BusinessEntityId", typeof(EmployeePayHistory).Name, "businessentityid");
-        //db.MappingColumns.Add("BusinessEntityId", typeof(EmployeeDepartmentHistory).Name, "businessentityid");
 
         // Powtarzaj powyższe dla wszystkich właściwości, które tego wymagają  
     }
