@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\OrmBenchmarkMag.csproj": {}
+    "C:\\Users\\march\\source\\repos\\orm-dotnet-benchmark\\OrmBenchmarkMag.csproj": {}
   },
   "projects": {
-    "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\OrmBenchmarkMag.csproj": {
+    "C:\\Users\\march\\source\\repos\\orm-dotnet-benchmark\\OrmBenchmarkMag.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\OrmBenchmarkMag.csproj",
+        "projectUniqueName": "C:\\Users\\march\\source\\repos\\orm-dotnet-benchmark\\OrmBenchmarkMag.csproj",
         "projectName": "OrmBenchmarkMag",
-        "projectPath": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\OrmBenchmarkMag.csproj",
-        "packagesPath": "C:\\Users\\march3wa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\march3wa\\source\\repos\\OrmBenchmarkMag\\obj\\",
+        "projectPath": "C:\\Users\\march\\source\\repos\\orm-dotnet-benchmark\\OrmBenchmarkMag.csproj",
+        "packagesPath": "C:\\Users\\march\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\march\\source\\repos\\orm-dotnet-benchmark\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\march3wa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\march\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -38,13 +34,7 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -149,7 +139,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

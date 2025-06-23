@@ -26,7 +26,7 @@ namespace OrmBenchmarkMag.Benchmarks
         protected OrmBenchmarkBase()
         {
             MssqlConnectionString = "Server=localhost,1433;Database=AdventureWorks2014;User Id=sa;Password=YourStr0ngP@ssw0rd!;TrustServerCertificate=True";
-            PostgresConnectionString = "Host=localhost;Port=5432;Database=Adventureworks;Username=postgres;Password=postgres12";
+            PostgresConnectionString = "Host=localhost;Port=5432;Database=Adventureworks;Username=postgres;Password=postgres12;Include Error Detail=true";
 
             GlobalConfiguration.Setup().UseSqlServer();
             GlobalConfiguration.Setup().UsePostgreSql();

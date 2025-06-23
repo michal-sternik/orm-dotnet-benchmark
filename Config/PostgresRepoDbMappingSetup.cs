@@ -30,6 +30,8 @@ public static class PostgresRepoDbMappingSetup
             MapEntityWithLowercase<EmployeeDepartmentHistory>("HumanResources.EmployeeDepartmentHistory", "humanresources.employeedepartmenthistory");
             MapEntityWithLowercase<Department>("HumanResources.Department", "humanresources.department");
             MapEntityWithLowercase<SalesOrderHeader>("Sales.SalesOrderHeader", "sales.salesorderheader");
+            MapEntityWithLowercase<CreditCard>("Sales.CreditCard", "sales.creditcard");
+            MapEntityWithLowercase<Address>("Person.Address", "person.address");
             // Możesz tu dodać kolejne:
             // MapEntityWithLowercase<Customer>("Sales.Customer", "sales.customer");
             // MapEntityWithLowercase<SalesOrderDetail>("Sales.SalesOrderDetail", "sales.salesorderdetail");

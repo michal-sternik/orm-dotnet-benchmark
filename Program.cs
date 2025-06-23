@@ -36,9 +36,9 @@ namespace OrmBenchmarkMag
             //{
             //    Console.WriteLine(o.SubTotal);
             //}
-
+            
             //BenchmarkRunner.Run<SelectPeopleBenchmarkMssql>();
-            BenchmarkRunner.Run<InsertCreditCardBenchmarkMssql>();
+            BenchmarkRunner.Run<InsertAddressBenchmarkPostgres>();
         }
     }
 }

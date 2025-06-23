@@ -24,7 +24,7 @@ namespace OrmBenchmarkMag.Config
                 .WithLaunchCount(1) 
                 .WithWarmupCount(5)
                 //standard - 10 ale dla insertow mamy 1 invocation wiec tutaj musi byc duzo
-                .WithIterationCount(100)
+                .WithIterationCount(10)
                 //dla krotko trwajacych queries - zwracajacych max 1000 rekordow
                 //.WithInvocationCount(1000)
                 //dla bardziej wymagajacych queries, ponad 1k, do 120k

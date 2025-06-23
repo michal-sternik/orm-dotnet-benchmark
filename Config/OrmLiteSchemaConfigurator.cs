@@ -166,7 +166,24 @@ public static class OrmLiteSchemaConfigurator
         typeof(EmployeeDepartmentHistory).GetProperty(nameof(EmployeeDepartmentHistory.BusinessEntityId)).AddAttributes(new AliasAttribute("businessentityid"));
         typeof(EmployeeDepartmentHistory).GetProperty(nameof(EmployeeDepartmentHistory.ShiftId)).AddAttributes(new AliasAttribute("shiftid"));
 
+        typeof(CreditCard).AddAttributes(new SchemaAttribute("sales"));
+        typeof(CreditCard).GetProperty(nameof(CreditCard.CardType)).AddAttributes(new AliasAttribute("cardtype"));
+        typeof(CreditCard).GetProperty(nameof(CreditCard.CardNumber)).AddAttributes(new AliasAttribute("cardnumber"));
+        typeof(CreditCard).GetProperty(nameof(CreditCard.ExpMonth)).AddAttributes(new AliasAttribute("expmonth"));
+        typeof(CreditCard).GetProperty(nameof(CreditCard.ExpYear)).AddAttributes(new AliasAttribute("expyear"));
+        typeof(CreditCard).GetProperty(nameof(CreditCard.CreditCardId)).AddAttributes(new AliasAttribute("creditcardid"));
+        typeof(CreditCard).GetProperty(nameof(CreditCard.ModifiedDate)).AddAttributes(new AliasAttribute("modifieddate"));
 
+
+        typeof(Address).AddAttributes(new SchemaAttribute("person"));
+        typeof(Address).GetProperty(nameof(Address.AddressId)).AddAttributes(new AliasAttribute("addressid"));
+        typeof(Address).GetProperty(nameof(Address.AddressLine1)).AddAttributes(new AliasAttribute("addressline1"));
+        typeof(Address).GetProperty(nameof(Address.AddressLine2)).AddAttributes(new AliasAttribute("addressline2"));
+        typeof(Address).GetProperty(nameof(Address.City)).AddAttributes(new AliasAttribute("city"));
+        typeof(Address).GetProperty(nameof(Address.StateProvinceId)).AddAttributes(new AliasAttribute("stateprovinceid"));
+        typeof(Address).GetProperty(nameof(Address.PostalCode)).AddAttributes(new AliasAttribute("postalcode"));
+        typeof(Address).GetProperty(nameof(Address.ModifiedDate)).AddAttributes(new AliasAttribute("modifieddate"));
+        typeof(Address).GetProperty(nameof(Address.Rowguid)).AddAttributes(new AliasAttribute("rowguid"));
 
 
     }

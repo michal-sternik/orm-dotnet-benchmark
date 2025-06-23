@@ -57,8 +57,8 @@ namespace OrmBenchmarkThesis.Benchmarks
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
             {
-                ConnectionString = MssqlConnectionString,
-                DbType = DbType.SqlServer,
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
                 IsAutoCloseConnection = true,
                 InitKeyType = InitKeyType.Attribute
             });

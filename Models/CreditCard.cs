@@ -49,8 +49,10 @@ public partial class CreditCard
     public DateTime ModifiedDate { get; set; }
     [SugarColumn(IsIgnore = true)]
     [Ignore]
+    [Column(IsIgnore = true)]
     public virtual ICollection<PersonCreditCard> PersonCreditCards { get; set; } = new List<PersonCreditCard>();
     [SugarColumn(IsIgnore = true)]
     [Ignore]
+    [Column(IsIgnore = true)]
     public virtual ICollection<SalesOrderHeader> SalesOrderHeaders { get; set; } = new List<SalesOrderHeader>();
 }
