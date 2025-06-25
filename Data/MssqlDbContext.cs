@@ -149,7 +149,9 @@ public partial class MssqlDbContext : DbContext
     public virtual DbSet<WorkOrderRouting>? WorkOrderRoutings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=AdventureWorks2014;User Id=sa;Password=YourStr0ngP@ssw0rd!;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=localhost,1433;Database=AdventureWorks2014;User Id=sa;Password=YourStr0ngP@ssw0rd!;TrustServerCertificate=True"
+            //, opt =>  opt.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
+            );
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
