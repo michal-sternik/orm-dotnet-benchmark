@@ -38,7 +38,7 @@ namespace OrmBenchmarkMag
             //}
             
             //BenchmarkRunner.Run<SelectPeopleBenchmarkMssql>();
-            BenchmarkRunner.Run<UpdateAddressBenchmarkPostgres>();
+            BenchmarkRunner.Run<DeleteAddressBenchmarkPostgres>();
         }
     }
 }
