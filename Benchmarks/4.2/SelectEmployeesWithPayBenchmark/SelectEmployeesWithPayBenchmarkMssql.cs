@@ -11,9 +11,11 @@ using LinqToDB;
 using OrmBenchmarkMag.Benchmarks;
 using SqlSugar;
 using FreeSql;
+using BenchmarkDotNet.Order;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
+    [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     [Config(typeof(ThesisBenchmarkConfig))]
     [MemoryDiagnoser]
     public class SelectEmployeesWithPayBenchmarkMssql : OrmBenchmarkBase

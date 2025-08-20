@@ -6,7 +6,7 @@ using System.Reflection;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 
-public static class PostgresRepoDbMappingSetup
+public static class RepoDbSchemaConfigurator
 {
     private static bool _initialized = false;
     private static readonly object _lock = new();

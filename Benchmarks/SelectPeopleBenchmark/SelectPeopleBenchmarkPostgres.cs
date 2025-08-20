@@ -23,7 +23,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         [GlobalSetup(Target = nameof(RepoDb_Postgres))]
         public void SetupRepoDBPostgres()
         {
-            PostgresRepoDbMappingSetup.Init();
+            RepoDbSchemaConfigurator.Init();
         }
 
         [Benchmark]

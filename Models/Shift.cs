@@ -23,12 +23,13 @@ public partial class Shift
     /// <summary>
     /// Shift start time.
     /// </summary>
-    public TimeOnly StartTime { get; set; }
+    
+    public TimeSpan StartTime { get; set; }
 
     /// <summary>
     /// Shift end time.
     /// </summary>
-    public TimeOnly EndTime { get; set; }
+    public TimeSpan EndTime { get; set; }
 
     /// <summary>
     /// Date and time the record was last updated.

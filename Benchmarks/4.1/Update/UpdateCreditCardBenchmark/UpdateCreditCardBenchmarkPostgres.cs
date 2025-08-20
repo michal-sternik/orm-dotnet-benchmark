@@ -31,7 +31,7 @@ namespace OrmBenchmarkThesis.Benchmarks
 
             try
             {
-                PostgresRepoDbMappingSetup.Init();
+                RepoDbSchemaConfigurator.Init();
             }
             catch (RepoDb.Exceptions.MappingExistsException)
             {

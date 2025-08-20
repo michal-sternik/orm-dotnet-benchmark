@@ -21,7 +21,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         [GlobalSetup(Target = nameof(RepoDb_Postgres))]
         public void SetupRepoDbPostgres()
         {
-            PostgresRepoDbMappingSetup.Init();
+            RepoDbSchemaConfigurator.Init();
         }
 
         [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]

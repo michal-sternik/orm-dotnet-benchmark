@@ -15,7 +15,7 @@ namespace OrmBenchmarkThesis.Benchmarks
     public class NumberOfPeopleOnShiftsBenchmarkPostgres : OrmBenchmarkBase
     {
         [GlobalSetup(Target = nameof(RepoDb_Postgres))]
-        public void SetupRepoDb() => PostgresRepoDbMappingSetup.Init();
+        public void SetupRepoDb() => RepoDbSchemaConfigurator.Init();
 
         [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
         public void SetupOrmLite() => OrmLiteSchemaConfigurator.ConfigureMappings();

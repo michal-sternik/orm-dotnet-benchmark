@@ -7,6 +7,7 @@ using BenchmarkDotNet.Exporters;
 using Microsoft.Extensions.Options;
 using BenchmarkDotNet.Exporters.Csv;
 using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Order;
 
 namespace OrmBenchmarkMag.Config
 {
@@ -37,6 +38,7 @@ namespace OrmBenchmarkMag.Config
             AddDiagnoser(MemoryDiagnoser.Default);
 
             AddExporter(CsvExporter.Default);
+            WithOrderer(new DefaultOrderer(SummaryOrderPolicy.FastestToSlowest));
 
             Options |= ConfigOptions.DisableOptimizationsValidator;
         }

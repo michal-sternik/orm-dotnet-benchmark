@@ -27,7 +27,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             using var conn = CreatePostgresConnection();
             conn.Open();
 
-            try { PostgresRepoDbMappingSetup.Init(); }
+            try { RepoDbSchemaConfigurator.Init(); }
             catch { }
 
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig

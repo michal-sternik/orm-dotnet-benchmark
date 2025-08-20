@@ -45,6 +45,11 @@ namespace OrmBenchmarkThesis.Benchmarks
         [Benchmark]
         public List<CustomerWithOrdersDto> FreeSql_MSSQL()
         {
+            var context = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
             return _freeSqlMssql.Ado.Query<CustomerWithOrdersDto>(@"
                 SELECT c.CustomerID, a.AddressLine1, sp.Name AS StateProvince, p.FirstName, p.LastName
                 FROM Sales.Customer c 
@@ -56,7 +61,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
 
-        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        [GlobalSetup(Targets = new[] { nameof(SqlSugar_MSSQL_Raw), nameof(SqlSugar_MSSQL) })]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -72,11 +77,19 @@ namespace OrmBenchmarkThesis.Benchmarks
         [Benchmark]
         public List<CustomerWithOrdersDto> SqlSugar_MSSQL()
         {
+            var context = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+
             var list = _sqlSugarClient.Queryable<Customer>()
-                .LeftJoin<SalesOrderHeader>((c, soh) => c.CustomerId == soh.CustomerId)
-                .LeftJoin<Address>((c, soh, a) => soh.BillToAddressId == a.AddressId)
-                .LeftJoin<StateProvince>((c, soh, a, sp) => a.StateProvinceId == sp.StateProvinceId)
-                .LeftJoin<Person>((c, soh, a, sp, p) => c.PersonId == p.BusinessEntityId)
+                .InnerJoin<SalesOrderHeader>((c, soh) => c.CustomerId == soh.CustomerId)
+                .InnerJoin<Address>((c, soh, a) => soh.BillToAddressId == a.AddressId)
+                .InnerJoin<StateProvince>((c, soh, a, sp) => a.StateProvinceId == sp.StateProvinceId)
+                .InnerJoin<Person>((c, soh, a, sp, p) => c.PersonId == p.BusinessEntityId)
                 .Select((c, soh, a, sp, p) => new CustomerWithOrdersDto
                 {
                     CustomerID = c.CustomerId,
@@ -89,6 +102,29 @@ namespace OrmBenchmarkThesis.Benchmarks
 
             return list;
         }
+
+        [Benchmark]
+        public List<CustomerWithOrdersDto> SqlSugar_MSSQL_Raw()
+        {
+                    var sql = @"
+                SELECT 
+                    c.CustomerId   AS CustomerID,
+                    a.AddressLine1,
+                    sp.Name        AS StateProvince,
+                    p.FirstName,
+                    p.LastName
+                FROM Sales.Customer c 
+                JOIN Sales.SalesOrderHeader soh ON c.CustomerID = soh.CustomerID
+                JOIN Person.Address a ON soh.BillToAddressID = a.AddressID
+                JOIN Person.StateProvince sp ON a.StateProvinceID = sp.StateProvinceID
+                JOIN Person.Person p ON c.PersonID = p.BusinessEntityID";
+
+            // tu używam tego samego klienta co wyżej (_sqlSugarClient)
+            var list = _sqlSugarClient.Ado.SqlQuery<CustomerWithOrdersDto>(sql);
+
+            return list;
+        }
+
 
         //dla ormlite dla tych dwoch benchmarkow czas jest praktycznie identyczny.
         [Benchmark]
@@ -148,74 +184,74 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
 
-        [Benchmark]
-        public List<CustomerWithOrdersDto> EFCore_MSSQL_OptimizedProjectionWithNoTracking()
-        {
-            using var context = CreateMssqlContext();
+        //[Benchmark]
+        //public List<CustomerWithOrdersDto> EFCore_MSSQL_OptimizedProjectionWithNoTracking()
+        //{
+        //    using var context = CreateMssqlContext();
 
-            var result = context.Customers
-                .AsNoTracking()
-                .Select(c => new
-                {
-                    c.CustomerId,
-                    c.Person.FirstName,
-                    c.Person.LastName,
-                    FirstOrder = c.SalesOrderHeaders
-                        .OrderBy(soh => soh.OrderDate)
-                        .Select(soh => new
-                        {
-                            soh.BillToAddress.AddressLine1,
-                            StateProvince = soh.BillToAddress.StateProvince.Name
-                        })
-                        .FirstOrDefault()
-                })
-                .Where(c => c.FirstOrder != null)
-                .Select(c => new CustomerWithOrdersDto
-                {
-                    CustomerID = c.CustomerId,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    AddressLine1 = c.FirstOrder.AddressLine1,
-                    StateProvince = c.FirstOrder.StateProvince
-                })
-                .ToList();
+        //    var result = context.Customers
+        //        .AsNoTracking()
+        //        .Select(c => new
+        //        {
+        //            c.CustomerId,
+        //            c.Person.FirstName,
+        //            c.Person.LastName,
+        //            FirstOrder = c.SalesOrderHeaders
+        //                .OrderBy(soh => soh.OrderDate)
+        //                .Select(soh => new
+        //                {
+        //                    soh.BillToAddress.AddressLine1,
+        //                    StateProvince = soh.BillToAddress.StateProvince.Name
+        //                })
+        //                .FirstOrDefault()
+        //        })
+        //        .Where(c => c.FirstOrder != null)
+        //        .Select(c => new CustomerWithOrdersDto
+        //        {
+        //            CustomerID = c.CustomerId,
+        //            FirstName = c.FirstName,
+        //            LastName = c.LastName,
+        //            AddressLine1 = c.FirstOrder.AddressLine1,
+        //            StateProvince = c.FirstOrder.StateProvince
+        //        })
+        //        .ToList();
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        [Benchmark]
-        public List<CustomerWithOrdersDto> EFCore_MSSQL_OptimizedProjection()
-        {
-            using var context = CreateMssqlContext();
+        //[Benchmark]
+        //public List<CustomerWithOrdersDto> EFCore_MSSQL_OptimizedProjection()
+        //{
+        //    using var context = CreateMssqlContext();
 
-            var result = context.Customers
-                .Select(c => new
-                {
-                    c.CustomerId,
-                    c.Person.FirstName,
-                    c.Person.LastName,
-                    FirstOrder = c.SalesOrderHeaders
-                        .OrderBy(soh => soh.OrderDate)
-                        .Select(soh => new
-                        {
-                            soh.BillToAddress.AddressLine1,
-                            StateProvince = soh.BillToAddress.StateProvince.Name
-                        })
-                        .FirstOrDefault()
-                })
-                .Where(c => c.FirstOrder != null)
-                .Select(c => new CustomerWithOrdersDto
-                {
-                    CustomerID = c.CustomerId,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    AddressLine1 = c.FirstOrder.AddressLine1,
-                    StateProvince = c.FirstOrder.StateProvince
-                })
-                .ToList();
+        //    var result = context.Customers
+        //        .Select(c => new
+        //        {
+        //            c.CustomerId,
+        //            c.Person.FirstName,
+        //            c.Person.LastName,
+        //            FirstOrder = c.SalesOrderHeaders
+        //                .OrderBy(soh => soh.OrderDate)
+        //                .Select(soh => new
+        //                {
+        //                    soh.BillToAddress.AddressLine1,
+        //                    StateProvince = soh.BillToAddress.StateProvince.Name
+        //                })
+        //                .FirstOrDefault()
+        //        })
+        //        .Where(c => c.FirstOrder != null)
+        //        .Select(c => new CustomerWithOrdersDto
+        //        {
+        //            CustomerID = c.CustomerId,
+        //            FirstName = c.FirstName,
+        //            LastName = c.LastName,
+        //            AddressLine1 = c.FirstOrder.AddressLine1,
+        //            StateProvince = c.FirstOrder.StateProvince
+        //        })
+        //        .ToList();
 
-            return result;
-        }
+        //    return result;
+        //}
 
 
         [Benchmark]
