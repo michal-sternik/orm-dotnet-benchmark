@@ -51,7 +51,7 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
 
             _targetIds = conn.Query<int>(
-                @"SELECT TOP 10 AddressID FROM Person.Address WHERE AddressLine2 IS NULL"
+                @"SELECT TOP 1000 AddressID FROM Person.Address WHERE AddressLine2 IS NULL"
             ).ToList();
         }
 

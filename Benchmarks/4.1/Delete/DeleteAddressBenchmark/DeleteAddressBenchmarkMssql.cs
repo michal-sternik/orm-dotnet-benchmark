@@ -56,7 +56,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"SET IDENTITY_INSERT Person.Address_Temp OFF;");
 
             _targetAddresses = conn.Query<Address>(
-                @"SELECT TOP 10 * FROM Person.Address_Temp WHERE AddressLine2 IS NULL"
+                @"SELECT TOP 1000 * FROM Person.Address_Temp WHERE AddressLine2 IS NULL"
             ).ToList();
         }
 

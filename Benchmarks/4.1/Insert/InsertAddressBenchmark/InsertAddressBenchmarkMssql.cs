@@ -50,7 +50,7 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
 
             var origAddresses = conn.Query<Address>(
-                @"SELECT TOP 1000 * FROM Person.Address"
+                @"SELECT TOP 100 * FROM Person.Address"
             ).ToList();
 
             _addresses = new List<Address>(origAddresses.Count);

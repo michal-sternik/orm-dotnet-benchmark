@@ -57,7 +57,7 @@ namespace OrmBenchmarkThesis.Benchmarks
 
             // Pobierz 10 000 rekordów jako szablon
             var origCards = conn.Query<CreditCard>(
-                @"SELECT TOP 1 * FROM Sales.CreditCard"
+                @"SELECT TOP 1000 * FROM Sales.CreditCard"
             ).ToList();
 
             _creditCards = new List<CreditCard>(origCards.Count);
