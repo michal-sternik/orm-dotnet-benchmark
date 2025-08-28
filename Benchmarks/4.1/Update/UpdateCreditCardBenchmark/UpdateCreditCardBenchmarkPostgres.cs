@@ -18,10 +18,11 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class UpdateCreditCardBenchmarkPostgres : OrmBenchmarkBase
     {
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlPostgres;
 
-        // Lista ID do aktualizacji
         private List<int> _targetIds;
 
         [GlobalSetup]
@@ -55,17 +56,18 @@ namespace OrmBenchmarkThesis.Benchmarks
             OrmLiteSchemaConfigurator.ConfigureMappings();
             FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
 
-            // Pobierz 1000 rekordów z typem 'SuperiorCard'
             _targetIds = conn.Query<int>(
                 @"SELECT creditcardid
                   FROM sales.creditcard
                   WHERE cardtype = 'SuperiorCard'
-                  LIMIT 100").ToList();
+                  LIMIT 100").ToList() ?? new List<int>();
         }
 
         [IterationSetup]
         public void IterationSetup()
         {
+            
+
             using var conn = CreatePostgresConnection();
             conn.Execute(
                 @"UPDATE sales.creditcard
@@ -76,6 +78,8 @@ namespace OrmBenchmarkThesis.Benchmarks
         [IterationCleanup]
         public void IterationCleanup()
         {
+            
+
             using var conn = CreatePostgresConnection();
             conn.Execute(
                 @"UPDATE sales.creditcard
@@ -83,74 +87,99 @@ namespace OrmBenchmarkThesis.Benchmarks
                   WHERE creditcardid = ANY(@Ids)", new { Ids = _targetIds });
         }
 
-        [Benchmark]
-        public void FreeSql_Postgres_Update()
-        {
-            _freeSqlPostgres.Update<CreditCard>()
-                .AsTable("sales.creditcard")
-                .Set(a => a.CardType, "Vista")
-                .Set(a => a.ExpYear, 2008)
-                .Where(a => _targetIds.Contains(a.CreditCardId))
-                .ExecuteAffrows();
-        }
+
+
 
         [Benchmark]
-        public void RepoDb_Postgres_Update()
+        public void Dapper_ORM()
         {
-            using var conn = CreatePostgresConnection();
+            
 
-            // Pobierz encje (to MUSI być w RepoDb dla SQL Server)
-            var cards = RepoDb.DbConnectionExtension.Query<CreditCard>(
-                conn,
-                "sales.creditcard",
-                where: new QueryField("creditcardid", Operation.In, _targetIds)).ToList();
-
-            foreach (var card in cards)
-            {
-                card.CardType = "Vista";
-                card.ExpYear = 2008;
-            }
-
-            RepoDb.DbConnectionExtension.UpdateAll(conn, cards);
-        }
-
-        [Benchmark]
-        public void Dapper_Postgres_Update()
-        {
             using var conn = CreatePostgresConnection();
             conn.Execute(
                 @"UPDATE sales.creditcard
                   SET cardtype = 'Vista', expyear = 2008
                   WHERE creditcardid = ANY(@Ids)", new { Ids = _targetIds });
         }
-
         [Benchmark]
-        public void EFCore_Postgres_Update()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreatePostgresContext();
-            ctx.CreditCards
-               .Where(c => _targetIds.Contains(c.CreditCardId))
-               .ExecuteUpdate(s => s
-                   .SetProperty(c => c.CardType, "Vista")
-                   .SetProperty(c => c.ExpYear, 2008));
+
+
+            using var conn = CreatePostgresConnection();
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn,
+            @"UPDATE sales.creditcard
+              SET cardtype = 'Vista', expyear = 2008
+              WHERE creditcardid IN (@Ids);",
+            new { Ids = _targetIds.ToArray() });
+
+
         }
 
         [Benchmark]
-        public void OrmLite_Postgres_Update()
+        public void SqlSugar_ORM()
         {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+
+            var ids = string.Join(",", _targetIds);
+            _sqlSugarClient.Ado.ExecuteCommand($@"
+                UPDATE sales.creditcard
+                SET cardtype = 'Vista', expyear = 2008
+                WHERE creditcardid IN ({ids})");
+        }
+
+
+        [Benchmark]
+        public void OrmLite_ORM()
+        {
+            
+
             using var db = CreateOrmLitePostgresConnection();
-            db.Update<CreditCard>(
-                new { CardType = "Vista", ExpYear = 2008 },
-                x => Sql.In(x.CreditCardId, _targetIds));
+            var ids = string.Join(",", _targetIds);
+            db.ExecuteSql($@"
+                UPDATE sales.creditcard
+                SET cardtype = 'Vista', expyear = 2008
+                WHERE creditcardid IN ({ids})");
+        }
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+            var ids = string.Join(",", _targetIds);
+            _freeSqlPostgres.Ado.ExecuteNonQuery($@"
+                UPDATE sales.creditcard
+                SET cardtype = 'Vista', expyear = 2008
+                WHERE creditcardid IN ({ids})");
         }
 
         [Benchmark]
-        public void SqlSugar_Postgres_Update()
+        public void EFCore_ORM()
         {
-            _sqlSugarClient.Updateable<CreditCard>()
-                .SetColumns(a => new CreditCard { CardType = "Vista", ExpYear = 2008 })
-                .Where(a => _targetIds.Contains(a.CreditCardId))
-                .ExecuteCommand();
+
+
+            using var ctx = CreatePostgresContext();
+            var ids = string.Join(",", _targetIds);
+            var sql = $@"
+                UPDATE sales.creditcard
+                SET cardtype = 'Vista', expyear = 2008
+                WHERE creditcardid IN ({ids})";
+
+            ctx.Database.ExecuteSqlRaw(sql);
         }
+
     }
 }

@@ -14,15 +14,17 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class ProductsOrderedMostOftenSortedBenchmarkPostgres : OrmBenchmarkBase
     {
-        [GlobalSetup(Target = nameof(RepoDb_Postgres))]
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
+        [GlobalSetup(Target = nameof(RepoDb_ORM))]
         public void SetupRepoDb() => RepoDbSchemaConfigurator.Init();
 
-        [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
+        [GlobalSetup(Target = nameof(OrmLite_ORM))]
         public void SetupOrmLite() => OrmLiteSchemaConfigurator.ConfigureMappings();
 
         private IFreeSql _freeSqlPostgres;
 
-        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlPostgres()
         {
             _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
@@ -32,8 +34,15 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public List<ProductOrderSummaryDto> FreeSql_Postgres()
+        public List<ProductOrderSummaryDto> FreeSql_ORM()
         {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
             return _freeSqlPostgres.Ado.Query<ProductOrderSummaryDto>(@"
                 SELECT 
                   pc.name AS Category,
@@ -49,10 +58,9 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-
         private SqlSugarClient _sqlSugarClient;
 
-        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -64,57 +72,56 @@ namespace OrmBenchmarkThesis.Benchmarks
             });
             SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
         }
-        [Benchmark]
-        public List<ProductOrderSummaryDto> SqlSugar_Postgres()
-        {
-            var list = _sqlSugarClient.Queryable<SalesOrderDetail>()
-                .LeftJoin<Product>((sod, p) => sod.ProductId == p.ProductId)
-                .LeftJoin<ProductSubcategory>((sod, p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
-                .LeftJoin<ProductCategory>((sod, p, psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
-                .GroupBy((sod, p, psc, pc) => new { category = pc.Name, subcategory = psc.Name, productname = p.Name })
-                .OrderBy("SUM(sod.orderqty) DESC")
-                .Select<dynamic>("pc.name AS category, psc.name AS subcategory, p.name AS productname, SUM(sod.orderqty) AS totalqty")
-                .ToList();
 
-            return list.Select(x => new ProductOrderSummaryDto
+        [Benchmark]
+        public List<ProductOrderSummaryDto> SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
             {
-                Category = x.category,
-                Subcategory = x.subcategory,
-                ProductName = x.productname,
-                TotalQty = Convert.ToInt32(x.totalqty)
-            }).ToList();
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            var sql = @"
+                SELECT 
+                  pc.name AS Category,
+                  psc.name AS Subcategory,
+                  p.name AS ProductName,
+                  SUM(sod.orderqty) AS TotalQty
+                FROM sales.salesorderdetail sod
+                JOIN production.product p ON sod.productid = p.productid
+                JOIN production.productsubcategory psc ON p.productsubcategoryid = psc.productsubcategoryid
+                JOIN production.productcategory pc ON psc.productcategoryid = pc.productcategoryid
+                GROUP BY pc.name, psc.name, p.name
+                ORDER BY TotalQty DESC";
+            return _sqlSugarClient.Ado.SqlQuery<ProductOrderSummaryDto>(sql);
         }
 
-
         [Benchmark]
-        public List<ProductOrderSummaryDto> EFCore_Postgres()
+        public List<ProductOrderSummaryDto> EFCore_ORM()
         {
             using var context = CreatePostgresContext();
             context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-            return context.SalesOrderDetails
-                .Include(sod => sod.Product)
-                    .ThenInclude(p => p.ProductSubcategory)
-                        .ThenInclude(psc => psc.ProductCategory)
-                .GroupBy(sod => new
-                {
-                    Category = sod.Product.ProductSubcategory.ProductCategory.Name,
-                    Subcategory = sod.Product.ProductSubcategory.Name,
-                    ProductName = sod.Product.Name
-                })
-                .Select(g => new ProductOrderSummaryDto
-                {
-                    Category = g.Key.Category,
-                    Subcategory = g.Key.Subcategory,
-                    ProductName = g.Key.ProductName,
-                    TotalQty = g.Sum(x => x.OrderQty)
-                })
-                .OrderByDescending(x => x.TotalQty)
-                .ToList();
+            return (from sod in context.SalesOrderDetails
+                    join p in context.Products on sod.ProductId equals p.ProductId
+                    join psc in context.ProductSubcategories on p.ProductSubcategoryId equals psc.ProductSubcategoryId
+                    join pc in context.ProductCategories on psc.ProductCategoryId equals pc.ProductCategoryId
+                    group sod by new { CategoryName = pc.Name, SubcategoryName = psc.Name, ProductName = p.Name } into g
+                    orderby g.Sum(x => x.OrderQty) descending
+                    select new ProductOrderSummaryDto
+                    {
+                        Category = g.Key.CategoryName,
+                        Subcategory = g.Key.SubcategoryName,
+                        ProductName = g.Key.ProductName,
+                        TotalQty = g.Sum(x => x.OrderQty)
+                    }).ToList();
         }
 
         [Benchmark]
-        public List<ProductOrderSummaryDto> Dapper_Postgres()
+        public List<ProductOrderSummaryDto> Dapper_ORM()
         {
             using var conn = CreatePostgresConnection();
             var sql = @"
@@ -133,7 +140,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public List<ProductOrderSummaryDto> RepoDb_Postgres()
+        public List<ProductOrderSummaryDto> RepoDb_ORM()
         {
             using var conn = CreatePostgresConnection();
             var sql = @"
@@ -152,30 +159,24 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public List<ProductOrderSummaryDto> OrmLite_Postgres_LinqStyle()
+        public List<ProductOrderSummaryDto> OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
 
-            var q = db.From<SalesOrderDetail>()
-                .Join<SalesOrderDetail, Product>((sod, p) => sod.ProductId == p.ProductId)
-                .Join<Product, ProductSubcategory>((p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
-                .Join<ProductSubcategory, ProductCategory>((psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
-                .GroupBy<SalesOrderDetail, Product, ProductSubcategory, ProductCategory>((sod, p, psc, pc) => new
-                {
-                    CategoryName = pc.Name,
-                    SubcategoryName = psc.Name,
-                    ProductName = p.Name
-                })
-                .Select<SalesOrderDetail, Product, ProductSubcategory, ProductCategory>((sod, p, psc, pc) => new
-                {
-                    Category = pc.Name,
-                    Subcategory = psc.Name,
-                    ProductName = p.Name,
-                    TotalQty = Sql.Sum(sod.OrderQty)
-                })
-                .OrderByDescending("TotalQty");
+            var sql = @"
+                SELECT 
+                  pc.name AS Category,
+                  psc.name AS Subcategory,
+                  p.name AS ProductName,
+                  SUM(sod.orderqty) AS TotalQty
+                FROM sales.salesorderdetail sod
+                JOIN production.product p ON sod.productid = p.productid
+                JOIN production.productsubcategory psc ON p.productsubcategoryid = psc.productsubcategoryid
+                JOIN production.productcategory pc ON psc.productcategoryid = pc.productcategoryid
+                GROUP BY pc.name, psc.name, p.name
+                ORDER BY TotalQty DESC";
 
-            return db.Select<ProductOrderSummaryDto>(q);
+            return db.SqlList<ProductOrderSummaryDto>(sql);
         }
     }
 }

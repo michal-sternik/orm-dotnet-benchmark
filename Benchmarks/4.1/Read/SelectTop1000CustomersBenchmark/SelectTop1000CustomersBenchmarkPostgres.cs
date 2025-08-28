@@ -16,25 +16,26 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectTop1000CustomersBenchmarkPostgres : OrmBenchmarkBase
     {
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlPostgres;
 
-        // --- RepoDb: ewentualne mapowania/schemat ---
-        [GlobalSetup(Target = nameof(RepoDb_Postgres))]
+
+        [GlobalSetup(Target = nameof(RepoDb_ORM))]
         public void SetupRepoDbPostgres()
         {
             RepoDbSchemaConfigurator.Init();
         }
 
-        // --- OrmLite: mapowania (jeśli masz własne) ---
-        [GlobalSetup(Target = nameof(OrmLite_Postgres))]
+        [GlobalSetup(Target = nameof(OrmLite_ORM))]
         public void SetupOrmLiteMappings()
         {
             OrmLiteSchemaConfigurator.ConfigureMappings();
         }
 
-        // --- FreeSql setup ---
-        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlPostgres()
         {
             _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
@@ -43,8 +44,8 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
         }
 
-        // --- SqlSugar setup ---
-        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -57,11 +58,8 @@ namespace OrmBenchmarkThesis.Benchmarks
             SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
         }
 
-        // -------------------------
-        // RAW SQL – Dapper
-        // -------------------------
         [Benchmark]
-        public List<Customer> Dapper_Postgres()
+        public List<Customer> Dapper_ORM()
         {
             using var connection = CreatePostgresConnection();
             return connection.Query<Customer>(@"
@@ -71,11 +69,9 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-        // -------------------------
-        // RAW SQL – RepoDb
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> RepoDb_Postgres()
+        public List<Customer> RepoDb_ORM()
         {
             using var connection = CreatePostgresConnection();
             return connection.ExecuteQuery<Customer>(@"
@@ -85,12 +81,18 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-        // -------------------------
-        // RAW SQL – SqlSugar
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> SqlSugar_Postgres()
+        public List<Customer> SqlSugar_ORM()
         {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
             var sql = @"
                 SELECT *
                 FROM sales.customer
@@ -98,11 +100,9 @@ namespace OrmBenchmarkThesis.Benchmarks
             return _sqlSugarClient.Ado.SqlQuery<Customer>(sql);
         }
 
-        // -------------------------
-        // RAW SQL – OrmLite
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> OrmLite_Postgres()
+        public List<Customer> OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
             var sql = @"
@@ -112,12 +112,17 @@ namespace OrmBenchmarkThesis.Benchmarks
             return db.SqlList<Customer>(sql);
         }
 
-        // -------------------------
-        // RAW SQL – FreeSql (ADO)
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> FreeSql_Postgres()
+        public List<Customer> FreeSql_ORM()
         {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
             return _freeSqlPostgres.Ado.Query<Customer>(@"
                 SELECT *
                 FROM sales.customer
@@ -125,15 +130,13 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-        // -------------------------
-        // EF Core – LINQ query syntax (comprehension)
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> EFCore_Postgres()
+        public List<Customer> EFCore_ORM()
         {
             using var context = CreatePostgresContext();
 
-            // Styl 'from ... in ... select ...' (bez Include, bez method syntax).
+            
             var query =
                 (from c in context.Customers
                  select c)

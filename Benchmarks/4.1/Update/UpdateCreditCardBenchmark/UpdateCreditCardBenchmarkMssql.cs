@@ -18,16 +18,18 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class UpdateCreditCardBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlMssql;
 
-        // Lista ID do aktualizacji
+
         private List<int> _targetIds;
 
         [GlobalSetup]
         public void GlobalSetup()
         {
-                
+
             using var conn = CreateMssqlConnection();
 
             try
@@ -53,7 +55,7 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .UseAutoSyncStructure(false)
                 .Build();
 
-            // Pobierz 1000 rekordów z typem 'SuperiorCard'
+            //pobierz 1000 rekordów z typem 'SuperiorCard'
             _targetIds = conn.Query<int>(
                 @"SELECT TOP 100 CreditCardId 
                   FROM Sales.CreditCard 
@@ -64,7 +66,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         [IterationSetup]
         public void IterationSetup()
         {
-            // Przy każdej iteracji, przywracamy dane do oryginału
+
             using var conn = CreateMssqlConnection();
             conn.Execute(
                 @"UPDATE Sales.CreditCard
@@ -75,7 +77,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         [IterationCleanup]
         public void IterationCleanup()
         {
-            // Przywróć dane do oryginału na wszelki wypadek
+
             using var conn = CreateMssqlConnection();
             conn.Execute(
                 @"UPDATE Sales.CreditCard
@@ -83,73 +85,87 @@ namespace OrmBenchmarkThesis.Benchmarks
                   WHERE CreditCardId IN @Ids", new { Ids = _targetIds });
         }
 
-        [Benchmark]
-        public void FreeSql_MSSQL_Update()
-        {
-            _freeSqlMssql.Update<CreditCard>()
-                .Set(a => a.CardType, "Vista")
-                .Set(a => a.ExpYear, 2008)
-                .Where(a => _targetIds.Contains(a.CreditCardId))
-                .ExecuteAffrows();
-        }
 
         [Benchmark]
-        public void RepoDb_MSSQL_Update()
+        public void Dapper_ORM()
         {
-            using var conn = CreateMssqlConnection();
 
-            // Pobierz encje (to MUSI być w RepoDb dla SQL Server)
-            var cards = RepoDb.DbConnectionExtension.Query<CreditCard>(
-                conn,
-                "Sales.CreditCard",
-                where: new QueryField("CreditCardId", Operation.In, _targetIds)).ToList();
-
-            foreach (var card in cards)
-            {
-                card.CardType = "Vista";
-                card.ExpYear = 2008;
-            }
-
-            RepoDb.DbConnectionExtension.UpdateAll(conn, cards);
-        }
-
-        [Benchmark]
-        public void Dapper_MSSQL_Update()
-        {
             using var conn = CreateMssqlConnection();
             conn.Execute(
                 @"UPDATE Sales.CreditCard
                   SET CardType = 'Vista', ExpYear = 2008
                   WHERE CreditCardId IN @Ids", new { Ids = _targetIds });
         }
-
         [Benchmark]
-        public void EFCore_MSSQL_Update()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreateMssqlContext();
-            ctx.CreditCards
-               .Where(c => _targetIds.Contains(c.CreditCardId))
-               .ExecuteUpdate(s => s
-                   .SetProperty(c => c.CardType, "Vista")
-                   .SetProperty(c => c.ExpYear, 2008));
+            
+            using var conn = CreateMssqlConnection();
+            var ids = string.Join(",", _targetIds);
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn,$@"
+                UPDATE Sales.CreditCard
+                SET CardType = 'Vista', ExpYear = 2008
+                WHERE CreditCardId IN ({ids})");
         }
 
+        
         [Benchmark]
-        public void OrmLite_MSSQL_Update()
+        public void SqlSugar_ORM()
         {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+
+            var ids = string.Join(",", _targetIds);
+            _sqlSugarClient.Ado.ExecuteCommand($@"
+                UPDATE Sales.CreditCard
+                SET CardType = 'Vista', ExpYear = 2008
+                WHERE CreditCardId IN ({ids})");
+        }
+
+ 
+
+        [Benchmark]
+        public void OrmLite_ORM()
+        {
+            
             using var db = CreateOrmLiteMssqlConnection();
-            db.Update<CreditCard>(
-                new { CardType = "Vista", ExpYear = 2008 },
-                x => Sql.In(x.CreditCardId, _targetIds));
+            var ids = string.Join(",", _targetIds);
+            db.ExecuteSql($@"
+                UPDATE Sales.CreditCard
+                SET CardType = 'Vista', ExpYear = 2008
+                WHERE CreditCardId IN ({ids})");
+        }
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+            var ids = string.Join(",", _targetIds);
+            _freeSqlMssql.Ado.ExecuteNonQuery($@"
+                UPDATE Sales.CreditCard
+                SET CardType = 'Vista', ExpYear = 2008
+                WHERE CreditCardId IN ({ids})");
+        }
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+
+            using var ctx = CreateMssqlContext();
+            var ids = string.Join(",", _targetIds);
+            ctx.Database.ExecuteSqlRaw($@"
+                UPDATE Sales.CreditCard
+                SET CardType = 'Vista', ExpYear = 2008
+                WHERE CreditCardId IN ({ids})");
         }
 
-        [Benchmark]
-        public void SqlSugar_MSSQL_Update()
-        {
-            _sqlSugarClient.Updateable<CreditCard>()
-                .SetColumns(a => new CreditCard { CardType = "Vista", ExpYear = 2008 })
-                .Where(a => _targetIds.Contains(a.CreditCardId))
-                .ExecuteCommand();
-        }
     }
 }

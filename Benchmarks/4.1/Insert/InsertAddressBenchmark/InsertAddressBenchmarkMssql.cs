@@ -17,6 +17,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class InsertAddressBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private List<Address> _addresses;
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlMssql;
@@ -50,7 +52,7 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
 
             var origAddresses = conn.Query<Address>(
-                @"SELECT TOP 100 * FROM Person.Address"
+                @"SELECT TOP 1 * FROM Person.Address"
             ).ToList();
 
             _addresses = new List<Address>(origAddresses.Count);
@@ -71,7 +73,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             {
                 addr.AddressLine1 = "Test Street " + rand.NextInt64(1_000_000_000_000_000, 9_999_999_999_999_999).ToString();
                 addr.PostalCode = rand.Next(10000, 99999).ToString();
-                addr.Rowguid = Guid.NewGuid(); // Generujemy unikalny rowguid
+                addr.Rowguid = Guid.NewGuid(); 
                 addr.AddressId = 0;
             }
         }
@@ -84,24 +86,11 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"DELETE FROM Person.Address WHERE AddressLine1 IN @Streets", new { Streets = streets });
         }
 
-        [Benchmark]
-        public void FreeSql_MSSQL_Insert()
-        {
-            _freeSqlMssql.Insert<Address>().AppendData(_addresses).ExecuteAffrows();
-        }
-
-        [Benchmark]
-        public void RepoDb_MSSQL_Insert()
-        {
-            using var connection = CreateMssqlConnection();
-            RepoDb.DbConnectionExtension.InsertAll(connection, _addresses);
-        }
-
 
         //dapper robi bulkinsert nawet 8 sekund dlatego ze bulkinsert tutaj to tak naprawde pojedyncze inserty
         //zeby bylo szybciej trzebaby uzyc zewnetrznej biblioteki do dappera
         [Benchmark]
-        public void Dapper_MSSQL_Insert()
+        public void Dapper_ORM()
         {
             using var conn = CreateMssqlConnection();
 
@@ -109,26 +98,51 @@ namespace OrmBenchmarkThesis.Benchmarks
                 @"INSERT INTO Person.Address (AddressLine1, AddressLine2, City, StateProvinceID, PostalCode,SpatialLocation, Rowguid, ModifiedDate)
                   VALUES (@AddressLine1, @AddressLine2, @City, @StateProvinceID, @PostalCode, NULL, @rowguid, @ModifiedDate)", _addresses);
         }
+        [Benchmark]
+        public void RepoDb_ORM()
+        {
+            using var connection = CreateMssqlConnection();
+            RepoDb.DbConnectionExtension.InsertAll(connection, _addresses);
+        }
 
         [Benchmark]
-        public void EFCore_MSSQL_Insert()
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+            _sqlSugarClient.Insertable(_addresses).ExecuteCommand();
+        }
+
+
+        [Benchmark]
+        public void OrmLite_ORM()
+        {
+            using var db = CreateOrmLiteMssqlConnection();
+            db.InsertAll(_addresses);
+        }
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                 .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                 .UseAutoSyncStructure(false)
+                 .Build();
+
+            _freeSqlMssql.Insert<Address>().AppendData(_addresses).ExecuteAffrows();
+        }
+        [Benchmark]
+        public void EFCore_ORM()
         {
             using var ctx = CreateMssqlContext();
             ctx.Addresses.AddRange(_addresses);
             ctx.SaveChanges();
         }
 
-        [Benchmark]
-        public void OrmLite_MSSQL_Insert()
-        {
-            using var db = CreateOrmLiteMssqlConnection();
-            db.InsertAll(_addresses);
-        }
-
-        [Benchmark]
-        public void SqlSugar_MSSQL_Insert()
-        {
-            _sqlSugarClient.Insertable(_addresses).ExecuteCommand();
-        }
     }
 }

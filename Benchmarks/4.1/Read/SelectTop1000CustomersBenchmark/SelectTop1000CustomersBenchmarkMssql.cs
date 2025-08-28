@@ -16,11 +16,13 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectTop1000CustomersBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlMssql;
 
-        // --- FreeSql setup (dla raw ADO.Query) ---
-        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlMssql()
         {
             _freeSqlMssql = new FreeSql.FreeSqlBuilder()
@@ -29,8 +31,8 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
         }
 
-        // --- SqlSugar setup (wspólne dla raw) ---
-        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -40,15 +42,12 @@ namespace OrmBenchmarkThesis.Benchmarks
                 IsAutoCloseConnection = true,
                 InitKeyType = InitKeyType.Attribute
             });
-            // Jeśli masz własne mapowania, możesz je tu zawołać:
-            // SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+
         }
 
-        // -------------------------
-        // RAW SQL – Dapper
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> Dapper_MSSQL()
+        public List<Customer> Dapper_ORM()
         {
             using var connection = CreateMssqlConnection();
             return connection.Query<Customer>(@"
@@ -57,11 +56,9 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-        // -------------------------
-        // RAW SQL – RepoDb
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> RepoDb_MSSQL()
+        public List<Customer> RepoDb_ORM()
         {
             using var connection = CreateMssqlConnection();
             return connection.ExecuteQuery<Customer>(@"
@@ -70,23 +67,25 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-        // -------------------------
-        // RAW SQL – SqlSugar
-        // -------------------------
         [Benchmark]
-        public List<Customer> SqlSugar_MSSQL()
+        public List<Customer> SqlSugar_ORM()
         {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
             var sql = @"
                 SELECT TOP (1000) *
                 FROM Sales.Customer";
             return _sqlSugarClient.Ado.SqlQuery<Customer>(sql);
         }
 
-        // -------------------------
-        // RAW SQL – OrmLite
-        // -------------------------
         [Benchmark]
-        public List<Customer> OrmLite_MSSQL()
+        public List<Customer> OrmLite_ORM()
         {
             using var db = CreateOrmLiteMssqlConnection();
             var sql = @"
@@ -95,12 +94,14 @@ namespace OrmBenchmarkThesis.Benchmarks
             return db.SqlList<Customer>(sql);
         }
 
-        // -------------------------
-        // RAW SQL – FreeSql (ADO)
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> FreeSql_MSSQL()
+        public List<Customer> FreeSql_ORM()
         {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
             // Użycie ADO.Query<T> aby wymusić czysty SQL
             return _freeSqlMssql.Ado.Query<Customer>(@"
                 SELECT TOP (1000) *
@@ -108,16 +109,13 @@ namespace OrmBenchmarkThesis.Benchmarks
             ").ToList();
         }
 
-        // -------------------------
-        // EF Core – LINQ query syntax (comprehension)
-        // -------------------------
+
         [Benchmark]
-        public List<Customer> EFCore_MSSQL()
+        public List<Customer> EFCore_ORM()
         {
             using var context = CreateMssqlContext();
 
-            // Styl 'from ... in ... select ...' (comprehension). Tu nie ma joinów,
-            // bo selekcjonujemy wyłącznie Customers; celowo bez Include i bez method syntax.
+
             var query =
                 (from c in context.Customers
                  select c)

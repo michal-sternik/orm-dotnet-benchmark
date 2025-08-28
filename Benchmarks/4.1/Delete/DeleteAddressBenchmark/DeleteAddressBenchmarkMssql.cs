@@ -17,6 +17,9 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class DeleteAddressBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
+
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlMssql;
         private List<Address> _targetAddresses;
@@ -44,19 +47,35 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .UseAutoSyncStructure(false)
                 .Build();
 
-            // Tworzymy tymczasową tabelę
-            conn.Execute(@"IF OBJECT_ID('Person.Address_Temp', 'U') IS NOT NULL DROP TABLE Person.Address_Temp;");
-            conn.Execute(@"SELECT * INTO Person.Address_Temp FROM Person.Address WHERE 1 = 0;");
 
-            conn.Execute(@"SET IDENTITY_INSERT Person.Address_Temp ON;");
+            conn.Execute(@"IF OBJECT_ID('Person.Address_Temp', 'U') IS NOT NULL
+                           DROP TABLE Person.Address_Temp;");
 
-            conn.Execute(@"INSERT INTO Person.Address_Temp (AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate)
-                           SELECT AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate FROM Person.Address;");
+            conn.Execute(@"SELECT TOP 0 *
+                           INTO Person.Address_Temp
+                           FROM Person.Address;");
 
-            conn.Execute(@"SET IDENTITY_INSERT Person.Address_Temp OFF;");
+
+            conn.Execute(@"
+                ALTER TABLE Person.Address_Temp
+                ADD CONSTRAINT PK_Address_Temp
+                PRIMARY KEY CLUSTERED (AddressID);
+            ");
+
+
+            conn.Execute("SET IDENTITY_INSERT Person.Address_Temp ON;");
+
+            conn.Execute(@"
+                INSERT INTO Person.Address_Temp
+                (AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate)
+                SELECT AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate
+                FROM Person.Address;
+            ");
+
+            conn.Execute("SET IDENTITY_INSERT Person.Address_Temp OFF;");
 
             _targetAddresses = conn.Query<Address>(
-                @"SELECT TOP 1000 * FROM Person.Address_Temp WHERE AddressLine2 IS NULL"
+                @"SELECT TOP 100 * FROM Person.Address_Temp WHERE AddressLine2 IS NULL"
             ).ToList();
         }
 
@@ -66,16 +85,22 @@ namespace OrmBenchmarkThesis.Benchmarks
             using var conn = CreateMssqlConnection();
             conn.Open();
 
+
             conn.Execute(@"DELETE FROM Person.Address_Temp WHERE AddressID IN @Ids",
                 new { Ids = _targetAddresses.Select(a => a.AddressId).ToList() });
 
-            conn.Execute(@"SET IDENTITY_INSERT Person.Address_Temp ON;");
 
-            conn.Execute(@"INSERT INTO Person.Address_Temp (AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate)
-                           SELECT AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate FROM Person.Address
-                           WHERE AddressID IN @Ids", new { Ids = _targetAddresses.Select(a => a.AddressId).ToList() });
+            conn.Execute("SET IDENTITY_INSERT Person.Address_Temp ON;");
 
-            conn.Execute(@"SET IDENTITY_INSERT Person.Address_Temp OFF;");
+            conn.Execute(@"
+                INSERT INTO Person.Address_Temp
+                (AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate)
+                SELECT AddressID, AddressLine1, AddressLine2, City, StateProvinceID, PostalCode, SpatialLocation, RowGuid, ModifiedDate
+                FROM Person.Address
+                WHERE AddressID IN @Ids;
+            ", new { Ids = _targetAddresses.Select(a => a.AddressId).ToList() });
+
+            conn.Execute("SET IDENTITY_INSERT Person.Address_Temp OFF;");
         }
 
         [GlobalCleanup]
@@ -84,27 +109,14 @@ namespace OrmBenchmarkThesis.Benchmarks
             using var conn = CreateMssqlConnection();
             conn.Open();
 
-            conn.Execute(@"IF OBJECT_ID('Person.Address_Temp', 'U') IS NOT NULL DROP TABLE Person.Address_Temp;");
+            conn.Execute(@"IF OBJECT_ID('Person.Address_Temp', 'U') IS NOT NULL
+                           DROP TABLE Person.Address_Temp;");
         }
 
-        [Benchmark]
-        public void FreeSql_MSSQL_Delete()
-        {
-            _freeSqlMssql.Delete<Address>()
-                .AsTable("Person.Address_Temp")
-                .Where(a => _targetAddresses.Select(x => x.AddressId).Contains(a.AddressId))
-                .ExecuteAffrows();
-        }
+
 
         [Benchmark]
-        public void RepoDb_MSSQL_Delete()
-        {
-            using var conn = CreateMssqlConnection();
-            RepoDb.DbConnectionExtension.DeleteAll(conn, "Person.Address_Temp", _targetAddresses);
-        }
-
-        [Benchmark]
-        public void Dapper_MSSQL_Delete()
+        public void Dapper_ORM()
         {
             using var conn = CreateMssqlConnection();
             conn.Execute(@"DELETE FROM Person.Address_Temp WHERE AddressID IN @Ids",
@@ -112,30 +124,61 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public void EFCore_MSSQL_Delete()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreateMssqlContext();
-
+            using var conn = CreateMssqlConnection();
             var ids = _targetAddresses.Select(a => a.AddressId).ToList();
-            ctx.Database.ExecuteSqlRaw($"DELETE FROM Person.Address_Temp WHERE AddressID IN ({string.Join(",", ids)})");
+
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn,
+                @"DELETE FROM Person.Address_Temp WHERE AddressID IN (@Ids)",
+                new { Ids = ids });
         }
 
         [Benchmark]
-        public void OrmLite_MSSQL_Delete()
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+            var ids = _targetAddresses.Select(a => a.AddressId).ToList();
+
+            var idsCsv = string.Join(",", ids);
+            _sqlSugarClient.Ado.ExecuteCommand($@"DELETE FROM Person.Address_Temp WHERE AddressID IN ({idsCsv})");
+        }
+
+        [Benchmark]
+        public void OrmLite_ORM()
         {
             using var db = CreateOrmLiteMssqlConnection();
-
             var ids = _targetAddresses.Select(a => a.AddressId).ToList();
             db.ExecuteSql($"DELETE FROM Person.Address_Temp WHERE AddressID IN ({string.Join(",", ids)})");
         }
 
         [Benchmark]
-        public void SqlSugar_MSSQL_Delete()
+        public void FreeSql_ORM()
         {
-            _sqlSugarClient.Deleteable<Address>()
-                .AS("Person.Address_Temp")
-                .Where(a => _targetAddresses.Select(x => x.AddressId).Contains(a.AddressId))
-                .ExecuteCommand();
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+            var ids = _targetAddresses.Select(a => a.AddressId).ToList();
+            var idsCsv = string.Join(",", ids);
+            _freeSqlMssql.Ado.ExecuteNonQuery($@"DELETE FROM Person.Address_Temp WHERE AddressID IN ({idsCsv})");
+        }
+
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+            using var ctx = CreateMssqlContext();
+            var ids = _targetAddresses.Select(a => a.AddressId).ToList();
+
+
+            ctx.Database.ExecuteSqlRaw($"DELETE FROM Person.Address_Temp WHERE AddressID IN ({string.Join(",", ids)})");
         }
     }
 }

@@ -67,40 +67,13 @@ namespace OrmBenchmarkMag.Benchmarks
         protected SqlConnection CreateMssqlConnection() => new SqlConnection(MssqlConnectionString);
         protected NpgsqlConnection CreatePostgresConnection() => new NpgsqlConnection(PostgresConnectionString);
 
-        //Linq2db
-        //protected DataConnection CreateLinq2DbMssqlConnection()
-        //{
-        //    var dc = new DataConnection(LinqToDB.ProviderName.SqlServer, MssqlConnectionString);
-        //    dc.MappingSchema.DefaultIgnoreEmptyTypes = false; // <-- to mówi: mapuj wszystkie klasy nawet bez [Table]
-        //    return dc;
-        //}
-        //protected DataConnection CreateLinq2DbPostgresConnection() => new DataConnection(LinqToDB.ProviderName.PostgreSQL, PostgresConnectionString);
+
 
         // OrmLite
         protected IDbConnection CreateOrmLiteMssqlConnection() => _mssqlOrmLiteFactory.OpenDbConnection();
         protected IDbConnection CreateOrmLitePostgresConnection() => _postgresOrmLiteFactory.OpenDbConnection();
 
-        //protected SqlSugarClient CreateSqlSugarMssqlClient()
-        //{
-        //    return new SqlSugarClient(new ConnectionConfig
-        //    {
-        //        ConnectionString = MssqlConnectionString,
-        //        DbType = SqlSugar.DbType.SqlServer,
-        //        IsAutoCloseConnection = true,
-        //        InitKeyType = InitKeyType.Attribute
-        //    });
-        //}
 
-        //protected SqlSugarClient CreateSqlSugarPostgresClient()
-        //{
-        //    return new SqlSugarClient(new ConnectionConfig
-        //    {
-        //        ConnectionString = PostgresConnectionString,
-        //        DbType = SqlSugar.DbType.PostgreSQL,
-        //        IsAutoCloseConnection = true,
-        //        InitKeyType = InitKeyType.SystemTable
-        //    });
-        //}
     }
 }
 
@@ -113,35 +86,4 @@ public class PostgreSqlNamingStrategy : OrmLiteNamingStrategyBase
 }
 
 
-
-//using BenchmarkDotNet.Attributes;
-//using Microsoft.EntityFrameworkCore;
-//using OrmBenchmarkMag.Data;
-
-
-//namespace OrmBenchmarkMag.Benchmarks
-//{
-//    public abstract class OrmBenchmarkBase
-//    {
-//        protected const string MssqlConnection = "Server=localhost,1433;Database=AdventureWorks2014;User Id=sa;Password=YourStr0ngP@ssw0rd!;TrustServerCertificate=True";
-//        protected const string PostgresConnection = "Host=localhost;Port=5432;Database=Adventureworks;Username=postgres;Password=postgres12";
-
-//        protected MssqlDbContext? _mssqlContext;
-//        protected PostgresqlDbContext? _postgresContext;
-
-//        [GlobalSetup]
-//        public void Setup()
-//        {
-//            var mssqlOptions = new DbContextOptionsBuilder<MssqlDbContext>()
-//                .UseSqlServer(MssqlConnection).Options;
-//            _mssqlContext = new MssqlDbContext(mssqlOptions);
-
-//            var postgresOptions = new DbContextOptionsBuilder<PostgresqlDbContext>()
-//                .UseNpgsql(PostgresConnection).Options;
-//            _postgresContext = new PostgresqlDbContext(postgresOptions);
-//        }
-
-
-//    }
-//}
  
