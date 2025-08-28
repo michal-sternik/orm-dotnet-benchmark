@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OrmBenchmarkMag")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e78619300c03f6c2e24f5918919faeb884e5d57")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e44f22faf7ecff4d47f73cedf2ae482632d1de98")]
 [assembly: System.Reflection.AssemblyProductAttribute("OrmBenchmarkMag")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OrmBenchmarkMag")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

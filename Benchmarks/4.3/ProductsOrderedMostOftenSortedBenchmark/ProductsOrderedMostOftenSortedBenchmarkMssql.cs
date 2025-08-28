@@ -2,7 +2,6 @@
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using OrmBenchmarkMag.Config;
-using OrmBenchmarkMag.Data;
 using OrmBenchmarkMag.Models;
 using RepoDb;
 using ServiceStack.OrmLite;
@@ -12,14 +11,15 @@ using System.Linq;
 
 namespace OrmBenchmarkMag.Benchmarks
 {
-
     [Config(typeof(ThesisBenchmarkConfig))]
     [MemoryDiagnoser]
     public class ProductsOrderedMostOftenSortedBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private IFreeSql _freeSqlMssql;
 
-        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlMssql()
         {
             _freeSqlMssql = new FreeSql.FreeSqlBuilder()
@@ -28,26 +28,11 @@ namespace OrmBenchmarkMag.Benchmarks
                 .Build();
         }
 
-        [Benchmark]
-        public List<ProductOrderSummaryDto> FreeSql_MSSQL()
-        {
-            return _freeSqlMssql.Ado.Query<ProductOrderSummaryDto>(@"
-                SELECT 
-                  pc.Name AS Category, psc.Name AS Subcategory, p.Name AS ProductName,
-                  SUM(sod.OrderQty) AS TotalQty
-                FROM Sales.SalesOrderDetail sod
-                JOIN Production.Product p ON sod.ProductID = p.ProductID
-                JOIN Production.ProductSubcategory psc ON p.ProductSubcategoryID = psc.ProductSubcategoryID
-                JOIN Production.ProductCategory pc ON psc.ProductCategoryID = pc.ProductCategoryID
-                GROUP BY pc.Name, psc.Name, p.Name
-                ORDER BY TotalQty DESC
-            ").ToList();
-        }
-
+    
 
         private SqlSugarClient _sqlSugarClient;
 
-        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -60,82 +45,11 @@ namespace OrmBenchmarkMag.Benchmarks
             SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
         }
 
-        [Benchmark]
-        public List<ProductOrderSummaryDto> SqlSugar_MSSQL()
-        {
-            var list = _sqlSugarClient.Queryable<SalesOrderDetail>()
-                .LeftJoin<Product>((sod, p) => sod.ProductId == p.ProductId)
-                .LeftJoin<ProductSubcategory>((sod, p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
-                .LeftJoin<ProductCategory>((sod, p, psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
-                .GroupBy((sod, p, psc, pc) => new { Category = pc.Name, Subcategory = psc.Name, ProductName = p.Name })
-                .OrderBy("SUM(sod.OrderQty) DESC")
-                .Select<dynamic>("pc.Name AS Category, psc.Name AS Subcategory, p.Name AS ProductName, SUM(sod.OrderQty) AS TotalQty")
-                .ToList();
 
-            return list.Select(x => new ProductOrderSummaryDto
-            {
-                Category = x.Category,
-                Subcategory = x.Subcategory,
-                ProductName = x.ProductName,
-                TotalQty = Convert.ToInt32(x.TotalQty)
-            }).ToList();
-        }
 
 
         [Benchmark]
-        public List<ProductOrderSummaryDto> EFCore_MSSQL_WithJoins()
-        {
-            using var context = CreateMssqlContext();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-            var result = (from sod in context.SalesOrderDetails
-                          join p in context.Products on sod.ProductId equals p.ProductId
-                          join psc in context.ProductSubcategories on p.ProductSubcategoryId equals psc.ProductSubcategoryId
-                          join pc in context.ProductCategories on psc.ProductCategoryId equals pc.ProductCategoryId
-                          group sod by new { CategoryName = pc.Name, SubcategoryName = psc.Name, ProductName = p.Name } into g
-                          orderby g.Sum(x => x.OrderQty) descending
-                          select new ProductOrderSummaryDto
-                          {
-                              Category = g.Key.CategoryName,
-                              Subcategory = g.Key.SubcategoryName,
-                              ProductName = g.Key.ProductName,
-                              TotalQty = g.Sum(x => x.OrderQty)
-                          }).ToList();
-
-            return result;
-        }
-
-        [Benchmark]
-        public List<ProductOrderSummaryDto> EFCore_MSSQL_WithIncludeAndGroup()
-        {
-            using var context = CreateMssqlContext();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-            var result = context.SalesOrderDetails
-                .Include(sod => sod.Product)
-                    .ThenInclude(p => p.ProductSubcategory)
-                        .ThenInclude(psc => psc.ProductCategory)
-                .GroupBy(sod => new
-                {
-                    Category = sod.Product.ProductSubcategory.ProductCategory.Name,
-                    Subcategory = sod.Product.ProductSubcategory.Name,
-                    ProductName = sod.Product.Name
-                })
-                .Select(g => new ProductOrderSummaryDto
-                {
-                    Category = g.Key.Category,
-                    Subcategory = g.Key.Subcategory,
-                    ProductName = g.Key.ProductName,
-                    TotalQty = g.Sum(sod => sod.OrderQty)
-                })
-                .OrderByDescending(r => r.TotalQty)
-                .ToList();
-
-            return result;
-        }
-
-        [Benchmark]
-        public List<ProductOrderSummaryDto> Dapper_MSSQL()
+        public List<ProductOrderSummaryDto> Dapper_ORM()
         {
             using var connection = CreateMssqlConnection();
 
@@ -154,7 +68,7 @@ namespace OrmBenchmarkMag.Benchmarks
         }
 
         [Benchmark]
-        public List<ProductOrderSummaryDto> RepoDb_MSSQL()
+        public List<ProductOrderSummaryDto> RepoDb_ORM()
         {
             using var connection = CreateMssqlConnection();
 
@@ -171,9 +85,31 @@ namespace OrmBenchmarkMag.Benchmarks
 
             return connection.ExecuteQuery<ProductOrderSummaryDto>(sql).ToList();
         }
-
         [Benchmark]
-        public List<ProductOrderSummaryDto> OrmLite_MSSQL_RawSql()
+        public List<ProductOrderSummaryDto> SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+            var sql = @"
+                SELECT 
+                  pc.Name AS Category, psc.Name AS Subcategory, p.Name AS ProductName,
+                  SUM(sod.OrderQty) AS TotalQty
+                FROM Sales.SalesOrderDetail sod
+                JOIN Production.Product p ON sod.ProductID = p.ProductID
+                JOIN Production.ProductSubcategory psc ON p.ProductSubcategoryID = psc.ProductSubcategoryID
+                JOIN Production.ProductCategory pc ON psc.ProductCategoryID = pc.ProductCategoryID
+                GROUP BY pc.Name, psc.Name, p.Name
+                ORDER BY TotalQty DESC";
+            return _sqlSugarClient.Ado.SqlQuery<ProductOrderSummaryDto>(sql);
+        }
+        [Benchmark]
+        public List<ProductOrderSummaryDto> OrmLite_ORM()
         {
             using var db = CreateOrmLiteMssqlConnection();
 
@@ -190,34 +126,47 @@ namespace OrmBenchmarkMag.Benchmarks
 
             return db.SqlList<ProductOrderSummaryDto>(sql);
         }
-
         [Benchmark]
-        public List<ProductOrderSummaryDto> OrmLite_MSSQL_LinqStyle()
+        public List<ProductOrderSummaryDto> FreeSql_ORM()
         {
-            using var db = CreateOrmLiteMssqlConnection();
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+             .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+             .UseAutoSyncStructure(false)
+             .Build();
+            return _freeSqlMssql.Ado.Query<ProductOrderSummaryDto>(@"
+                SELECT 
+                  pc.Name AS Category, psc.Name AS Subcategory, p.Name AS ProductName,
+                  SUM(sod.OrderQty) AS TotalQty
+                FROM Sales.SalesOrderDetail sod
+                JOIN Production.Product p ON sod.ProductID = p.ProductID
+                JOIN Production.ProductSubcategory psc ON p.ProductSubcategoryID = psc.ProductSubcategoryID
+                JOIN Production.ProductCategory pc ON psc.ProductCategoryID = pc.ProductCategoryID
+                GROUP BY pc.Name, psc.Name, p.Name
+                ORDER BY TotalQty DESC
+            ").ToList();
+        }
+        [Benchmark]
+        public List<ProductOrderSummaryDto> EFCore_ORM()
+        {
+            using var context = CreateMssqlContext();
+            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-            var q = db.From<SalesOrderDetail>()
-                .Join<SalesOrderDetail, Product>((sod, p) => sod.ProductId == p.ProductId)
-                .Join<Product, ProductSubcategory>((p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
-                .Join<ProductSubcategory, ProductCategory>((psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
-                .GroupBy<SalesOrderDetail, Product, ProductSubcategory, ProductCategory>((sod, p, psc, pc) => new
-                {
-                    CategoryName = pc.Name,
-                    SubcategoryName = psc.Name,
-                    ProductName = p.Name
-                })
-                .Select<SalesOrderDetail, Product, ProductSubcategory, ProductCategory>((sod, p, psc, pc) => new
-                {
-                    Category = pc.Name,
-                    Subcategory = psc.Name,
-                    ProductName = p.Name,
-                    TotalQty = Sql.Sum(sod.OrderQty)
-                })
-                .OrderByDescending("TotalQty");
-
-            return db.Select<ProductOrderSummaryDto>(q);
+            return (from sod in context.SalesOrderDetails
+                    join p in context.Products on sod.ProductId equals p.ProductId
+                    join psc in context.ProductSubcategories on p.ProductSubcategoryId equals psc.ProductSubcategoryId
+                    join pc in context.ProductCategories on psc.ProductCategoryId equals pc.ProductCategoryId
+                    group sod by new { CategoryName = pc.Name, SubcategoryName = psc.Name, ProductName = p.Name } into g
+                    orderby g.Sum(x => x.OrderQty) descending
+                    select new ProductOrderSummaryDto
+                    {
+                        Category = g.Key.CategoryName,
+                        Subcategory = g.Key.SubcategoryName,
+                        ProductName = g.Key.ProductName,
+                        TotalQty = g.Sum(x => x.OrderQty)
+                    }).ToList();
         }
     }
+
     public class ProductOrderSummaryDto
     {
         public string Category { get; set; }

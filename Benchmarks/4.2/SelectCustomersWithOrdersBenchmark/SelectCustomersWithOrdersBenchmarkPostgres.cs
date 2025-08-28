@@ -16,15 +16,17 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectCustomersWithOrdersBenchmarkPostgres : OrmBenchmarkBase
     {
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
 
-        [GlobalSetup(Target = nameof(RepoDb_Postgres))]
+        [GlobalSetup(Target = nameof(RepoDb_ORM))]
         public void SetupRepoDbPostgres()
         {
             RepoDbSchemaConfigurator.Init();
         }
 
-        [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
+        [GlobalSetup(Target = nameof(OrmLite_ORM))]
         public void SetupOrmLiteMappings()
         {
             OrmLiteSchemaConfigurator.ConfigureMappings();
@@ -32,7 +34,7 @@ namespace OrmBenchmarkThesis.Benchmarks
 
         private IFreeSql _freeSqlPostgres;
 
-        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlPostgres()
         {
             _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
@@ -41,21 +43,10 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
         }
 
-        [Benchmark]
-        public List<CustomerWithOrdersDto> FreeSql_Postgres()
-        {
-            return _freeSqlPostgres.Ado.Query<CustomerWithOrdersDto>(@"
-                SELECT c.customerid, a.addressline1, sp.name AS stateprovince, p.firstname, p.lastname
-                FROM sales.customer c 
-                JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
-                JOIN person.address a ON soh.billtoaddressid = a.addressid
-                JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
-                JOIN person.person p ON c.personid = p.businessentityid
-            ").ToList();
-        }
 
 
-        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -68,97 +59,115 @@ namespace OrmBenchmarkThesis.Benchmarks
             SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
         }
 
-        [Benchmark]
-        public List<CustomerWithOrdersDto> SqlSugar_Postgres()
-        {
-            var list = _sqlSugarClient.Queryable<Customer>()
-                .LeftJoin<SalesOrderHeader>((c, soh) => c.CustomerId == soh.CustomerId)
-                .LeftJoin<Address>((c, soh, a) => soh.BillToAddressId == a.AddressId)
-                .LeftJoin<StateProvince>((c, soh, a, sp) => a.StateProvinceId == sp.StateProvinceId)
-                .LeftJoin<Person>((c, soh, a, sp, p) => c.PersonId == p.BusinessEntityId)
-                .Select((c, soh, a, sp, p) => new CustomerWithOrdersDto
-                {
-                    CustomerID = c.CustomerId,
-                    AddressLine1 = a.AddressLine1,
-                    StateProvince = sp.Name,
-                    FirstName = p.FirstName,
-                    LastName = p.LastName
-                })
-                .ToList();
-
-            return list;
-        }
+  
 
         [Benchmark]
-        public List<CustomerWithOrdersDto> Dapper_Postgres()
+        public List<CustomerWithOrdersDto> Dapper_ORM()
         {
             using var connection = CreatePostgresConnection();
             return connection.Query<CustomerWithOrdersDto>(
-                @"SELECT c.CustomerID, a.AddressLine1, sp.Name AS StateProvince, p.FirstName, p.LastName
-                  FROM Sales.Customer c 
-                  JOIN Sales.SalesOrderHeader soh ON c.CustomerID = soh.CustomerID
-                  JOIN Person.Address a ON soh.BillToAddressID = a.AddressID
-                  JOIN Person.StateProvince sp ON a.StateProvinceID = sp.StateProvinceID
-                  JOIN Person.Person p ON c.PersonID = p.BusinessEntityID")
+                @"SELECT c.customerid, a.addressline1, sp.name AS stateprovince, p.firstname, p.lastname
+                  FROM sales.customer c 
+                  JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+                  JOIN person.address a ON soh.billtoaddressid = a.addressid
+                  JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+                  JOIN person.person p ON c.personid = p.businessentityid")
                 .ToList();
         }
 
-        //[Benchmark]
-        ////to sie robi za dlugo
-        //[InvocationCount(1)]
-        //[WarmupCount(1)]
-        //public List<CustomerWithOrdersDto> EFCore_Postgres()
-        //{
-        //    using var context = CreatePostgresContext();
-        //    return context.Customers
-        //        .Include(c => c.Person)
-        //        .Include(c => c.SalesOrderHeaders)
-        //            .ThenInclude(soh => soh.BillToAddress)
-        //                .ThenInclude(addr => addr.StateProvince)
-        //        .Select(c => new CustomerWithOrdersDto
-        //        {
-        //            CustomerID = c.CustomerId,
-        //            AddressLine1 = c.SalesOrderHeaders.FirstOrDefault().BillToAddress.AddressLine1,
-        //            StateProvince = c.SalesOrderHeaders.FirstOrDefault().BillToAddress.StateProvince.Name,
-        //            FirstName = c.Person.FirstName,
-        //            LastName = c.Person.LastName
-        //        })
-        //        .ToList();
-        //}
+
 
         [Benchmark]
-        public List<CustomerWithOrdersDto> RepoDb_Postgres()
+        public List<CustomerWithOrdersDto> RepoDb_ORM()
         {
             using var connection = CreatePostgresConnection();
             return connection.ExecuteQuery<CustomerWithOrdersDto>(
-                @"SELECT c.CustomerID, a.AddressLine1, sp.Name AS StateProvince, p.FirstName, p.LastName
-                  FROM Sales.Customer c 
-                  JOIN Sales.SalesOrderHeader soh ON c.CustomerID = soh.CustomerID
-                  JOIN Person.Address a ON soh.BillToAddressID = a.AddressID
-                  JOIN Person.StateProvince sp ON a.StateProvinceID = sp.StateProvinceID
-                  JOIN Person.Person p ON c.PersonID = p.BusinessEntityID")
+                @"SELECT c.customerid, a.addressline1, sp.name AS stateprovince, p.firstname, p.lastname
+                  FROM sales.customer c 
+                  JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+                  JOIN person.address a ON soh.billtoaddressid = a.addressid
+                  JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+                  JOIN person.person p ON c.personid = p.businessentityid")
                 .ToList();
         }
-
+        [Benchmark]
+        public List<CustomerWithOrdersDto> SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            var sql = @"
+                SELECT c.customerid   AS CustomerID,
+                       a.addressline1,
+                       sp.name        AS StateProvince,
+                       p.firstname,
+                       p.lastname
+                FROM sales.customer c 
+                JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+                JOIN person.address a ON soh.billtoaddressid = a.addressid
+                JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+                JOIN person.person p ON c.personid = p.businessentityid";
+            return _sqlSugarClient.Ado.SqlQuery<CustomerWithOrdersDto>(sql);
+        }
 
         [Benchmark]
-        public List<CustomerWithOrdersDto> OrmLite_Postgres_LinqStyle()
+        public List<CustomerWithOrdersDto> OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
 
-            var q = db.From<Customer>()
-                .Join<Customer, SalesOrderHeader>((c, soh) => c.CustomerId == soh.CustomerId)
-                .Join<SalesOrderHeader, Address>((soh, a) => soh.BillToAddressId == a.AddressId)
-                .Join<Address, StateProvince>((a, sp) => a.StateProvinceId == sp.StateProvinceId)
-                .Join<Customer, Person>((c, p) => c.PersonId == p.BusinessEntityId)
-                .Select(@"Sales.Customer.CustomerID, 
-                  Person.Address.AddressLine1, 
-                  Person.StateProvince.Name as StateProvince, 
-                  Person.Person.FirstName, 
-                  Person.Person.LastName");
+            var sql = @"
+                SELECT c.customerid, a.addressline1, sp.name AS stateprovince, p.firstname, p.lastname
+                FROM sales.customer c 
+                JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+                JOIN person.address a ON soh.billtoaddressid = a.addressid
+                JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+                JOIN person.person p ON c.personid = p.businessentityid";
 
-            return db.Select<CustomerWithOrdersDto>(q);
+            return db.SqlList<CustomerWithOrdersDto>(sql);
         }
+        [Benchmark]
+        public List<CustomerWithOrdersDto> FreeSql_ORM()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
 
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+            return _freeSqlPostgres.Ado.Query<CustomerWithOrdersDto>(@"
+                SELECT c.customerid, a.addressline1, sp.name AS stateprovince, p.firstname, p.lastname
+                FROM sales.customer c 
+                JOIN sales.salesorderheader soh ON c.customerid = soh.customerid
+                JOIN person.address a ON soh.billtoaddressid = a.addressid
+                JOIN person.stateprovince sp ON a.stateprovinceid = sp.stateprovinceid
+                JOIN person.person p ON c.personid = p.businessentityid
+            ").ToList();
+        }
+        [Benchmark]
+      
+        public List<CustomerWithOrdersDto> EFCore_ORM()
+        {
+            using var context = CreatePostgresContext();
+
+            return (from c in context.Customers
+                    join soh in context.SalesOrderHeaders on c.CustomerId equals soh.CustomerId
+                    join a in context.Addresses on soh.BillToAddressId equals a.AddressId
+                    join sp in context.StateProvinces on a.StateProvinceId equals sp.StateProvinceId
+                    join p in context.People on c.PersonId equals p.BusinessEntityId
+                    select new CustomerWithOrdersDto
+                    {
+                        CustomerID = c.CustomerId,
+                        AddressLine1 = a.AddressLine1,
+                        StateProvince = sp.Name,
+                        FirstName = p.FirstName,
+                        LastName = p.LastName
+                    }).ToList();
+        }
     }
 }

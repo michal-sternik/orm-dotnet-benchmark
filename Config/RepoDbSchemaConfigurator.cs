@@ -19,9 +19,7 @@ public static class RepoDbSchemaConfigurator
         {
             if (_initialized) return;
 
-            // Inicjalizacja providerów
-            //SqlServerBootstrap.Initialize();
-            //PostgreSqlBootstrap.Initialize();
+
 
             // Mapowanie modeli
             MapEntityWithLowercase<Employee>("HumanResources.Employee", "humanresources.employee");
@@ -32,7 +30,7 @@ public static class RepoDbSchemaConfigurator
             MapEntityWithLowercase<SalesOrderHeader>("Sales.SalesOrderHeader", "sales.salesorderheader");
             MapEntityWithLowercase<CreditCard>("Sales.CreditCard", "sales.creditcard");
             MapEntityWithLowercase<Address>("Person.Address", "person.address");
-            // Możesz tu dodać kolejne:
+
             // MapEntityWithLowercase<Customer>("Sales.Customer", "sales.customer");
             // MapEntityWithLowercase<SalesOrderDetail>("Sales.SalesOrderDetail", "sales.salesorderdetail");
 
@@ -42,10 +40,7 @@ public static class RepoDbSchemaConfigurator
 
     public static void MapEntityWithLowercase<T>(string mssqlTable, string postgresTable) where T : class
     {
-        // MSSQL
-        //FluentMapper
-        //    .Entity<T>()
-        //    .Table(mssqlTable);
+
 
         // Postgres
         var mapping = FluentMapper

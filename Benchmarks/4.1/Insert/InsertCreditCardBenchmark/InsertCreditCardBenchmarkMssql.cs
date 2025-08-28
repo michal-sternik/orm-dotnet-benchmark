@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OrmBenchmarkMag.Benchmarks;
 
-//czyli wszystkie musza byc w jednym globalsetup, zeby generowac (bo inaczej "instance of an object"). dodatkowo 
+//czyli wszystkie musza byc w jednym globalsetup, zeby generowac. dodatkowo 
 //w iterationsetup losujemy nowe numery kart, bo cos szwankowalo jak byly generowane raz na benchmark w globalsetup
 //w iterationcleanup musza byc czyszczenie danych, bo inaczej beda sie nakladac dane z poprzednich iteracji
 //trzeba uzupelnic mapowania - robilem to w modelach adnotacjami, ale dla postgresa pewnie bedzie inaczej
@@ -21,6 +21,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class InsertCreditCardBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private List<CreditCard> _creditCards;
         //private List<string> _addedCardNumbers;
         private SqlSugarClient _sqlSugarClient;
@@ -93,48 +95,62 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"DELETE FROM Sales.CreditCard WHERE CardNumber IN @Numbers", new { Numbers = cardNumbers });
         }
 
-        [Benchmark]
-        public void FreeSql_MSSQL_Insert()
-        {
-            _freeSqlMssql.Insert<CreditCard>().AppendData(_creditCards).ExecuteAffrows();
-        }
+
 
         [Benchmark]
-        public void RepoDb_MSSQL_Insert()
-        {
-            using var connection = CreateMssqlConnection();
-            RepoDb.DbConnectionExtension.InsertAll(connection, _creditCards);
-        }
-
-        [Benchmark]
-        public void Dapper_MSSQL_Insert()
+        public void Dapper_ORM()
         {
             using var conn = CreateMssqlConnection();
             conn.Execute(
                 @"INSERT INTO Sales.CreditCard (CardType, CardNumber, ExpMonth, ExpYear, ModifiedDate)
                   VALUES (@CardType, @CardNumber, @ExpMonth, @ExpYear, @ModifiedDate)", _creditCards);
         }
+        [Benchmark]
+        public void RepoDb_ORM()
+        {
+            using var connection = CreateMssqlConnection();
+            RepoDb.DbConnectionExtension.InsertAll(connection, _creditCards);
+        }
+
 
         [Benchmark]
-        public void EFCore_MSSQL_Insert()
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+            _sqlSugarClient.Insertable(_creditCards).ExecuteCommand();
+        }
+ 
+
+        [Benchmark]
+        public void OrmLite_ORM()
+        {
+            using var db = CreateOrmLiteMssqlConnection();
+            db.InsertAll(_creditCards);
+        }
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+            _freeSqlMssql.Insert<CreditCard>().AppendData(_creditCards).ExecuteAffrows();
+        }
+        [Benchmark]
+        public void EFCore_ORM()
         {
             using var ctx = CreateMssqlContext();
             ctx.CreditCards.AddRange(_creditCards);
             ctx.SaveChanges();
         }
 
-        [Benchmark]
-        public void OrmLite_MSSQL_Insert()
-        {
-            using var db = CreateOrmLiteMssqlConnection();
-            db.InsertAll(_creditCards);
-        }
-
-
-        [Benchmark]
-        public void SqlSugar_MSSQL_Insert()
-        {
-            _sqlSugarClient.Insertable(_creditCards).ExecuteCommand();
-        }
     }
 }

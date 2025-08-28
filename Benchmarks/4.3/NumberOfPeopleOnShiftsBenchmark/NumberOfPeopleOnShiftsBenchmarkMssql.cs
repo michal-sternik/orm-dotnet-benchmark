@@ -15,9 +15,11 @@ namespace OrmBenchmarkMag.Benchmarks
     [MemoryDiagnoser]
     public class NumberOfPeopleOnShiftsBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private IFreeSql _freeSqlMssql;
 
-        [GlobalSetup(Target = nameof(FreeSql_MSSQL))]
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlMssql()
         {
             _freeSqlMssql = new FreeSql.FreeSqlBuilder()
@@ -26,22 +28,9 @@ namespace OrmBenchmarkMag.Benchmarks
                 .Build();
         }
 
-        [Benchmark]
-        public List<ShiftWithEmployeeCountDto> FreeSql_MSSQL()
-        {
-            return _freeSqlMssql.Ado.Query<ShiftWithEmployeeCountDto>(@"
-                SELECT s.name AS ShiftName, COUNT(edh.businessentityid) AS EmployeeCount
-                FROM humanresources.employeedepartmenthistory edh
-                JOIN humanresources.shift s ON edh.shiftid = s.shiftid
-                GROUP BY s.name
-                ORDER BY EmployeeCount DESC
-            ").ToList();
-        }
-
-
         private SqlSugarClient _sqlSugarClient;
 
-        [GlobalSetup(Target = nameof(SqlSugar_MSSQL))]
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -54,60 +43,11 @@ namespace OrmBenchmarkMag.Benchmarks
             SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
         }
 
-        [Benchmark]
-        public List<ShiftWithEmployeeCountDto> SqlSugar_MSSQL()
-        {
-            var list = _sqlSugarClient.Queryable<EmployeeDepartmentHistory>()
-                .LeftJoin<Shift>((edh, s) => edh.ShiftId == s.ShiftId)
-                .GroupBy((edh, s) => s.Name)
-                .OrderBy("COUNT(edh.BusinessEntityId) DESC")
-                .Select<dynamic>("s.Name AS ShiftName, COUNT(edh.BusinessEntityId) AS EmployeeCount")
-                .ToList();
 
-            return list.Select(x => new ShiftWithEmployeeCountDto
-            {
-                ShiftName = x.ShiftName,
-                EmployeeCount = Convert.ToInt32(x.EmployeeCount)
-            }).ToList();
-        }
 
 
         [Benchmark]
-        public List<ShiftWithEmployeeCountDto> EFCore_MSSQL_WithJoin()
-        {
-            using var context = CreatePostgresContext();
-
-            return (from edh in context.EmployeeDepartmentHistories
-                    join s in context.Shifts on edh.ShiftId equals s.ShiftId
-                    group edh by s.Name into g
-                    orderby g.Count() descending
-                    select new ShiftWithEmployeeCountDto
-                    {
-                        ShiftName = g.Key,
-                        EmployeeCount = g.Count()
-                    }).ToList();
-        }
-
-        [Benchmark]
-        public List<ShiftWithEmployeeCountDto> EFCore_MSSQL_WithIncludeAndGroup()
-        {
-            using var context = CreateMssqlContext();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-            return context.EmployeeDepartmentHistories
-                .Include(e => e.Shift)
-                .AsEnumerable()
-                .GroupBy(e => e.Shift.Name)
-                .OrderByDescending(g => g.Count())
-                .Select(g => new ShiftWithEmployeeCountDto
-                {
-                    ShiftName = g.Key,
-                    EmployeeCount = g.Count()
-                }).ToList();
-        }
-
-        [Benchmark]
-        public List<ShiftWithEmployeeCountDto> Dapper_MSSQL()
+        public List<ShiftWithEmployeeCountDto> Dapper_ORM()
         {
             using var connection = CreateMssqlConnection();
 
@@ -122,7 +62,7 @@ namespace OrmBenchmarkMag.Benchmarks
         }
 
         [Benchmark]
-        public List<ShiftWithEmployeeCountDto> RepoDb_MSSQL()
+        public List<ShiftWithEmployeeCountDto> RepoDb_ORM()
         {
             using var connection = CreateMssqlConnection();
 
@@ -135,35 +75,71 @@ namespace OrmBenchmarkMag.Benchmarks
 
             return connection.ExecuteQuery<ShiftWithEmployeeCountDto>(sql).ToList();
         }
-
         [Benchmark]
-        public List<ShiftWithEmployeeCountDto> OrmLite_MSSQL_RawSql()
+        public List<ShiftWithEmployeeCountDto> SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+            var sql = @"
+                SELECT s.name AS ShiftName, COUNT(edh.businessentityid) AS EmployeeCount
+                FROM humanresources.employeedepartmenthistory edh
+                JOIN humanresources.shift s ON edh.shiftid = s.shiftid
+                GROUP BY s.name
+                ORDER BY EmployeeCount DESC";
+            return _sqlSugarClient.Ado.SqlQuery<ShiftWithEmployeeCountDto>(sql);
+        }
+        [Benchmark]
+        public List<ShiftWithEmployeeCountDto> OrmLite_ORM()
         {
             using var db = CreateOrmLiteMssqlConnection();
 
             var sql = @"
-            SELECT s.Name AS ShiftName, COUNT(edh.BusinessEntityID) AS EmployeeCount
-            FROM HumanResources.EmployeeDepartmentHistory edh
-            JOIN HumanResources.Shift s ON edh.ShiftID = s.ShiftID
-            GROUP BY s.Name
-            ORDER BY EmployeeCount DESC;";
+                SELECT s.Name AS ShiftName, COUNT(edh.BusinessEntityID) AS EmployeeCount
+                FROM HumanResources.EmployeeDepartmentHistory edh
+                JOIN HumanResources.Shift s ON edh.ShiftID = s.ShiftID
+                GROUP BY s.Name
+                ORDER BY EmployeeCount DESC;";
 
             return db.SqlList<ShiftWithEmployeeCountDto>(sql);
         }
-
         [Benchmark]
-        public List<ShiftWithEmployeeCountDto> OrmLite_MSSQL_LinqStyle()
+        public List<ShiftWithEmployeeCountDto> FreeSql_ORM()
         {
-            using var db = CreateOrmLiteMssqlConnection();
-
-            var q = db.From<EmployeeDepartmentHistory>()
-                .Join<Shift>((edh, s) => edh.ShiftId == s.ShiftId)
-                .GroupBy("Shift.name")
-                .Select("Shift.name AS ShiftName, COUNT(employeedepartmenthistory.businessentityid) AS EmployeeCount")
-                .OrderByDescending("COUNT(employeedepartmenthistory.businessentityid)");
-
-            return db.Select<ShiftWithEmployeeCountDto>(q);
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+             .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+             .UseAutoSyncStructure(false)
+             .Build();
+            return _freeSqlMssql.Ado.Query<ShiftWithEmployeeCountDto>(@"
+                SELECT s.name AS ShiftName, COUNT(edh.businessentityid) AS EmployeeCount
+                FROM humanresources.employeedepartmenthistory edh
+                JOIN humanresources.shift s ON edh.shiftid = s.shiftid
+                GROUP BY s.name
+                ORDER BY EmployeeCount DESC
+            ").ToList();
         }
+        [Benchmark]
+        public List<ShiftWithEmployeeCountDto> EFCore_ORM()
+        {
+            using var context = CreateMssqlContext();
+
+            return (from edh in context.EmployeeDepartmentHistories
+                    join s in context.Shifts on edh.ShiftId equals s.ShiftId
+                    group edh by s.Name into g
+                    orderby g.Count() descending
+                    select new ShiftWithEmployeeCountDto
+                    {
+                        ShiftName = g.Key,
+                        EmployeeCount = g.Count()
+                    }).ToList();
+        }
+
+
     }
 
     public class ShiftWithEmployeeCountDto

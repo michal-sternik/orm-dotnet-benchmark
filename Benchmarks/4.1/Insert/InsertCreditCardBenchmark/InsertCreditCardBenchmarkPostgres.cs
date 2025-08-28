@@ -17,6 +17,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class InsertCreditCardBenchmarkPostgres : OrmBenchmarkBase
     {
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
         //tutaj robimy cos takiego, ze wyciagamy max id i probujemy dodac, ale okazuje sie ze mimo ze w bazie
         //max id jest ponad 19k, to przy dodawaniu autoinkrementacja na swiezej bazie i tak liczy od 0,
         //bo postgres przydziela ID na podstawie sekwencji, nie na podstawie danych w tabeli dlatego
@@ -104,53 +106,70 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"DELETE FROM sales.creditcard WHERE cardnumber = ANY(@Numbers)", new { Numbers = cardNumbers });
         }
 
-        //tutaj nalezy zrobic mapowanie w srodku statementu w benchmarku, bo taki jest priorytet
-        //w przypadku orma freesql
-        [Benchmark]
-        public void FreeSql_Postgres_Insert()
-        {
-            _freeSqlPostgres.Insert<CreditCard>()
-                .AsTable("sales.creditcard")
-                .AppendData(_creditCards)
-                .ExecuteAffrows();
-
-        }
 
         [Benchmark]
-        public void RepoDb_Postgres_Insert()
-        {
-            using var connection = CreatePostgresConnection();
-            RepoDb.DbConnectionExtension.InsertAll(connection, _creditCards);
-        }
-
-        [Benchmark]
-        public void Dapper_Postgres_Insert()
+        public void Dapper_ORM()
         {
             using var conn = CreatePostgresConnection();
             conn.Execute(
                 @"INSERT INTO sales.creditcard (creditcardid, cardtype, cardnumber, expmonth, expyear, modifieddate)
                   VALUES (@CreditCardId, @CardType, @CardNumber, @ExpMonth, @ExpYear, @ModifiedDate)", _creditCards);
         }
-
         [Benchmark]
-        public void EFCore_Postgres_Insert()
+        public void RepoDb_ORM()
+        {
+            using var connection = CreatePostgresConnection();
+            RepoDb.DbConnectionExtension.InsertAll(connection, _creditCards);
+        }
+        [Benchmark]
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            _sqlSugarClient.Insertable(_creditCards).ExecuteCommand();
+        }
+        [Benchmark]
+        public void OrmLite_ORM()
+        {
+            using var db = CreateOrmLitePostgresConnection();
+            db.InsertAll(_creditCards);
+        }
+        //tutaj nalezy zrobic mapowanie w srodku statementu w benchmarku, bo taki jest priorytet
+        //w przypadku orma freesql
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+
+
+            _freeSqlPostgres.Insert<CreditCard>()
+                .AsTable("sales.creditcard")
+                .AppendData(_creditCards)
+                .ExecuteAffrows();
+
+        }
+        [Benchmark]
+        public void EFCore_ORM()
         {
             using var ctx = CreatePostgresContext();
             ctx.CreditCards.AddRange(_creditCards);
             ctx.SaveChanges();
         }
 
-        [Benchmark]
-        public void OrmLite_Postgres_Insert()
-        {
-            using var db = CreateOrmLitePostgresConnection();
-            db.InsertAll(_creditCards);
-        }
 
-        [Benchmark]
-        public void SqlSugar_Postgres_Insert()
-        {
-            _sqlSugarClient.Insertable(_creditCards).ExecuteCommand();
-        }
+
+
     }
 }

@@ -17,6 +17,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class InsertAddressBenchmarkPostgres : OrmBenchmarkBase
     {
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
         private List<Address> _addresses;
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlPostgres;
@@ -53,7 +55,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
 
             var origAddresses = conn.Query<Address>(
-                @"SELECT * FROM person.address LIMIT 10"
+                @"SELECT * FROM person.address LIMIT 1"
             ).ToList();
 
             _addresses = new List<Address>(origAddresses.Count);
@@ -103,25 +105,10 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"DELETE FROM person.address WHERE addressline1 = ANY(@Streets)", new { Streets = streets });
         }
 
-        [Benchmark]
-        public void FreeSql_Postgres_Insert()
-        {
-            _freeSqlPostgres.Insert<Address>()
-                .AsTable("person.address")
-                .AppendData(_addresses)
-                .ExecuteAffrows();
-        }
-
-        [Benchmark]
-        public void RepoDb_Postgres_Insert()
-        {
-            using var connection = CreatePostgresConnection();
-            RepoDb.DbConnectionExtension.InsertAll(connection, _addresses);
-        }
 
         //dapper insert - spatiallocation pomijamy (NULL)
         [Benchmark]
-        public void Dapper_Postgres_Insert()
+        public void Dapper_ORM()
         {
             using var conn = CreatePostgresConnection();
 
@@ -129,26 +116,58 @@ namespace OrmBenchmarkThesis.Benchmarks
                 @"INSERT INTO person.address (addressid, addressline1, addressline2, city, stateprovinceid, postalcode, spatiallocation, rowguid, modifieddate)
                   VALUES (@AddressId, @AddressLine1, @AddressLine2, @City, @StateProvinceId, @PostalCode, NULL, @Rowguid, @ModifiedDate)", _addresses);
         }
-
         [Benchmark]
-        public void EFCore_Postgres_Insert()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreatePostgresContext();
-            ctx.Addresses.AddRange(_addresses);
-            ctx.SaveChanges();
+            using var connection = CreatePostgresConnection();
+            RepoDb.DbConnectionExtension.InsertAll(connection, _addresses);
         }
 
+
         [Benchmark]
-        public void OrmLite_Postgres_Insert()
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            _sqlSugarClient.Insertable(_addresses).ExecuteCommand();
+        }
+
+
+
+        [Benchmark]
+        public void OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
             db.InsertAll(_addresses);
         }
-
         [Benchmark]
-        public void SqlSugar_Postgres_Insert()
+        public void FreeSql_ORM()
         {
-            _sqlSugarClient.Insertable(_addresses).ExecuteCommand();
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+
+            _freeSqlPostgres.Insert<Address>()
+                .AsTable("person.address")
+                .AppendData(_addresses)
+                .ExecuteAffrows();
+        }
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+            using var ctx = CreatePostgresContext();
+            ctx.Addresses.AddRange(_addresses);
+            ctx.SaveChanges();
         }
     }
 }

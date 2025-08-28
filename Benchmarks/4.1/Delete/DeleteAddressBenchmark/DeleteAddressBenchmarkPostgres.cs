@@ -17,6 +17,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class DeleteAddressBenchmarkPostgres : OrmBenchmarkBase
     {
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlPostgres;
         private List<Address> _targetAddresses;
@@ -53,7 +55,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"INSERT INTO person.address_temp SELECT * FROM person.address;");
 
             _targetAddresses = conn.Query<Address>(
-                @"SELECT * FROM person.address_temp WHERE addressline2 IS NULL LIMIT 10"
+                @"SELECT * FROM person.address_temp WHERE addressline2 IS NULL LIMIT 100"
             ).ToList();
         }
 
@@ -79,24 +81,11 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"DROP TABLE IF EXISTS person.address_temp;");
         }
 
-        [Benchmark]
-        public void FreeSql_Postgres_Delete()
-        {
-            _freeSqlPostgres.Delete<Address>()
-                .AsTable("person.address_temp")
-                .Where(a => _targetAddresses.Select(x => x.AddressId).Contains(a.AddressId))
-                .ExecuteAffrows();
-        }
+
+
 
         [Benchmark]
-        public void RepoDb_Postgres_Delete()
-        {
-            using var conn = CreatePostgresConnection();
-            RepoDb.DbConnectionExtension.DeleteAll(conn, "person.address_temp", _targetAddresses);
-        }
-
-        [Benchmark]
-        public void Dapper_Postgres_Delete()
+        public void Dapper_ORM()
         {
             using var conn = CreatePostgresConnection();
             conn.Execute(@"DELETE FROM person.address_temp WHERE addressid = ANY(@Ids)",
@@ -104,30 +93,67 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public void EFCore_Postgres_Delete()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreatePostgresContext();
+            using var conn = CreatePostgresConnection();
 
             var ids = _targetAddresses.Select(a => a.AddressId).ToList();
-            ctx.Database.ExecuteSqlRaw("DELETE FROM person.address_temp WHERE addressid = ANY({0})", ids);
+
+            var idsCsv = string.Join(",", ids);
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn,$@"DELETE FROM person.address_temp WHERE addressid IN ({string.Join(",", idsCsv)})");
         }
 
         [Benchmark]
-        public void OrmLite_Postgres_Delete()
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            var ids = _targetAddresses.Select(a => a.AddressId).ToList();
+
+            var idsCsv = string.Join(",", ids);
+            _sqlSugarClient.Ado.ExecuteCommand($@"DELETE FROM person.address_temp WHERE addressid IN ({idsCsv})");
+        }
+        [Benchmark]
+        public void OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
 
             var ids = _targetAddresses.Select(a => a.AddressId).ToList();
             db.ExecuteSql($"DELETE FROM person.address_temp WHERE addressid IN ({string.Join(",", ids)})");
         }
-
         [Benchmark]
-        public void SqlSugar_Postgres_Delete()
+        public void FreeSql_ORM()
         {
-            _sqlSugarClient.Deleteable<Address>()
-                .AS("person.address_temp")
-                .Where(a => _targetAddresses.Select(x => x.AddressId).Contains(a.AddressId))
-                .ExecuteCommand();
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+            var ids = _targetAddresses.Select(a => a.AddressId).ToList();
+
+
+            var idsCsv = string.Join(",", ids);
+            _freeSqlPostgres.Ado.ExecuteNonQuery($@"DELETE FROM person.address_temp WHERE addressid IN ({string.Join(",", idsCsv)})");
         }
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+            using var ctx = CreatePostgresContext();
+
+            var ids = _targetAddresses.Select(a => a.AddressId).ToList();
+            ctx.Database.ExecuteSqlRaw("DELETE FROM person.address_temp WHERE addressid = ANY({0})", ids);
+        }
+        
+
+
+
+
     }
 }

@@ -14,15 +14,17 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class CustomersThatBoughtTheMostProductsBenchmarkPostgres : OrmBenchmarkBase
     {
-        [GlobalSetup(Target = nameof(RepoDb_Postgres))]
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
+        [GlobalSetup(Target = nameof(RepoDb_ORM))]
         public void SetupRepoDb() => RepoDbSchemaConfigurator.Init();
 
-        [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
+        [GlobalSetup(Target = nameof(OrmLite_ORM))]
         public void SetupOrmLite() => OrmLiteSchemaConfigurator.ConfigureMappings();
 
         private IFreeSql _freeSqlPostgres;
 
-        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlPostgres()
         {
             _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
@@ -31,24 +33,11 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
         }
 
-        [Benchmark]
-        public List<CustomerProductCountDto> FreeSql_Postgres()
-        {
-            return _freeSqlPostgres.Ado.Query<CustomerProductCountDto>(@"
-                SELECT c.customerid, COUNT(sod.productid) AS productcount
-                FROM sales.salesorderdetail sod
-                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
-                JOIN sales.customer c ON soh.customerid = c.customerid
-                GROUP BY c.customerid
-                HAVING COUNT(sod.productid) > 10
-                ORDER BY productcount DESC
-            ").ToList();
-        }
 
 
         private SqlSugarClient _sqlSugarClient;
 
-        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -61,31 +50,97 @@ namespace OrmBenchmarkThesis.Benchmarks
             SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
         }
 
-        [Benchmark]
-        public List<CustomerProductCountDto> SqlSugar_Postgres()
-        {
-            var list = _sqlSugarClient.Queryable<SalesOrderDetail>()
-                .LeftJoin<SalesOrderHeader>((sod, soh) => sod.SalesOrderId == soh.SalesOrderId)
-                .LeftJoin<Customer>((sod, soh, c) => soh.CustomerId == c.CustomerId)
-                .GroupBy((sod, soh, c) => c.CustomerId)
-                .Having("COUNT(sod.ProductId) > 10 ")
-                .OrderBy("COUNT(sod.ProductId) DESC")
-                .Select<dynamic>("c.CustomerId, COUNT(sod.ProductId) AS ProductCount")
-                .ToList();
 
-            return list.Select(x => new CustomerProductCountDto
-            {
-                CustomerId = Convert.ToInt32(x.customerid),
-                ProductCount = Convert.ToInt32(x.productcount)
-            }).ToList();
+
+        [Benchmark]
+        public List<CustomerProductCountDto> Dapper_ORM()
+        {
+            using var conn = CreatePostgresConnection();
+            var sql = @"
+                SELECT c.customerid AS ""CustomerId"", COUNT(sod.productid) AS ""ProductCount""
+                FROM sales.salesorderdetail sod
+                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
+                JOIN sales.customer c ON soh.customerid = c.customerid
+                GROUP BY c.customerid
+                HAVING COUNT(sod.productid) > 10
+                ORDER BY ""ProductCount"" DESC;";
+            return conn.Query<CustomerProductCountDto>(sql).ToList();
         }
 
+        [Benchmark]
+        public List<CustomerProductCountDto> RepoDb_ORM()
+        {
+            using var conn = CreatePostgresConnection();
+            var sql = @"
+                SELECT c.customerid AS ""CustomerId"", COUNT(sod.productid) AS ""ProductCount""
+                FROM sales.salesorderdetail sod
+                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
+                JOIN sales.customer c ON soh.customerid = c.customerid
+                GROUP BY c.customerid
+                HAVING COUNT(sod.productid) > 10
+                ORDER BY ""ProductCount"" DESC;";
+            return conn.ExecuteQuery<CustomerProductCountDto>(sql).ToList();
+        }
+        [Benchmark]
+        public List<CustomerProductCountDto> SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            var sql = @"
+                SELECT c.customerid AS ""CustomerId"", COUNT(sod.productid) AS ""ProductCount""
+                FROM sales.salesorderdetail sod
+                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
+                JOIN sales.customer c ON soh.customerid = c.customerid
+                GROUP BY c.customerid
+                HAVING COUNT(sod.productid) > 10
+                ORDER BY ""ProductCount"" DESC";
+            return _sqlSugarClient.Ado.SqlQuery<CustomerProductCountDto>(sql);
+        }
+        [Benchmark]
+        public List<CustomerProductCountDto> OrmLite_ORM()
+        {
+            using var db = CreateOrmLitePostgresConnection();
+
+            var sql = @"
+                SELECT c.customerid AS ""CustomerId"", COUNT(sod.productid) AS ""ProductCount""
+                FROM sales.salesorderdetail sod
+                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
+                JOIN sales.customer c ON soh.customerid = c.customerid
+                GROUP BY c.customerid
+                HAVING COUNT(sod.productid) > 10
+                ORDER BY ""ProductCount"" DESC";
+
+            return db.SqlList<CustomerProductCountDto>(sql);
+        }
+        [Benchmark]
+        public List<CustomerProductCountDto> FreeSql_ORM()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
 
 
-
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+            return _freeSqlPostgres.Ado.Query<CustomerProductCountDto>(@"
+                SELECT c.customerid AS ""CustomerId"", COUNT(sod.productid) AS ""ProductCount""
+                FROM sales.salesorderdetail sod
+                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
+                JOIN sales.customer c ON soh.customerid = c.customerid
+                GROUP BY c.customerid
+                HAVING COUNT(sod.productid) > 10
+                ORDER BY ""ProductCount"" DESC
+            ").ToList();
+        }
 
         [Benchmark]
-        public List<CustomerProductCountDto> EFCore_Postgres()
+        public List<CustomerProductCountDto> EFCore_ORM()
         {
             using var context = CreatePostgresContext();
             context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -101,52 +156,6 @@ namespace OrmBenchmarkThesis.Benchmarks
                         CustomerId = g.Key,
                         ProductCount = g.Count()
                     }).ToList();
-        }
-
-        [Benchmark]
-        public List<CustomerProductCountDto> Dapper_Postgres()
-        {
-            using var conn = CreatePostgresConnection();
-            var sql = @"
-                SELECT c.customerid, COUNT(sod.productid) AS productcount
-                FROM sales.salesorderdetail sod
-                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
-                JOIN sales.customer c ON soh.customerid = c.customerid
-                GROUP BY c.customerid
-                HAVING COUNT(sod.productid) > 10
-                ORDER BY productcount DESC;";
-            return conn.Query<CustomerProductCountDto>(sql).ToList();
-        }
-
-        [Benchmark]
-        public List<CustomerProductCountDto> RepoDb_Postgres()
-        {
-            using var conn = CreatePostgresConnection();
-            var sql = @"
-                SELECT c.customerid, COUNT(sod.productid) AS productcount
-                FROM sales.salesorderdetail sod
-                JOIN sales.salesorderheader soh ON sod.salesorderid = soh.salesorderid
-                JOIN sales.customer c ON soh.customerid = c.customerid
-                GROUP BY c.customerid
-                HAVING COUNT(sod.productid) > 10
-                ORDER BY productcount DESC;";
-            return conn.ExecuteQuery<CustomerProductCountDto>(sql).ToList();
-        }
-
-        [Benchmark]
-        public List<CustomerProductCountDto> OrmLite_Postgres_LinqStyle()
-        {
-            using var db = CreateOrmLitePostgresConnection();
-
-            var q = db.From<SalesOrderDetail>()
-                .Join<SalesOrderDetail, SalesOrderHeader>((sod, soh) => sod.SalesOrderId == soh.SalesOrderId)
-                .Join<SalesOrderHeader, Customer>((soh, c) => soh.CustomerId == c.CustomerId)
-                .GroupBy<SalesOrderDetail, SalesOrderHeader, Customer>((sod, soh, c) => c.CustomerId)
-                .Having("COUNT(salesorderdetail.productid) > 10")
-                .Select("customer.customerid, COUNT(salesorderdetail.productid) AS productcount")
-                .OrderByDescending("productcount");
-
-            return db.Select<CustomerProductCountDto>(q);
         }
     }
 }

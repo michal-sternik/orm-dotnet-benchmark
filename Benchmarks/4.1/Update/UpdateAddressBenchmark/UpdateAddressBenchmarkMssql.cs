@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FreeSql;
 using OrmBenchmarkMag.Benchmarks;
+using RepoDb.Enumerations;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -17,6 +18,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class UpdateAddressBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlMssql;
 
@@ -51,7 +54,7 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
 
             _targetIds = conn.Query<int>(
-                @"SELECT TOP 10 AddressID FROM Person.Address WHERE AddressLine2 IS NULL"
+                @"SELECT TOP 100 AddressID FROM Person.Address WHERE AddressLine2 IS NULL"
             ).ToList();
         }
 
@@ -75,69 +78,88 @@ namespace OrmBenchmarkThesis.Benchmarks
                   WHERE AddressID IN @Ids", new { Ids = _targetIds });
         }
 
-        [Benchmark]
-        public void FreeSql_MSSQL_Update()
-        {
-            _freeSqlMssql.Update<Address>()
-                .Set(a => a.AddressLine2, "Undefined")
-                .Where(a => _targetIds.Contains(a.AddressId))
-                .ExecuteAffrows();
-        }
 
         [Benchmark]
-        public void RepoDb_MSSQL_Update()
+        public void Dapper_ORM()
         {
-            using var conn = CreateMssqlConnection();
 
-            var addresses = RepoDb.DbConnectionExtension.Query<Address>(
-                conn,
-                "Person.Address",
-                where: new RepoDb.QueryField("AddressID", RepoDb.Enumerations.Operation.In, _targetIds)).ToList();
-
-            foreach (var address in addresses)
-            {
-                address.AddressLine2 = "Undefined";
-            }
-
-            RepoDb.DbConnectionExtension.UpdateAll(conn, addresses);
-        }
-
-        [Benchmark]
-        public void Dapper_MSSQL_Update()
-        {
             using var conn = CreateMssqlConnection();
             conn.Execute(
                 @"UPDATE Person.Address
                   SET AddressLine2 = 'Undefined'
                   WHERE AddressID IN @Ids", new { Ids = _targetIds });
         }
-
         [Benchmark]
-        public void EFCore_MSSQL_Update()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreateMssqlContext();
-            ctx.Addresses
-               .Where(a => _targetIds.Contains(a.AddressId))
-               .ExecuteUpdate(s => s
-                   .SetProperty(a => a.AddressLine2, "Undefined"));
+            
+            using var conn = CreateMssqlConnection();
+            var ids = string.Join(",", _targetIds);
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn, $@"
+                UPDATE Person.Address
+                SET AddressLine2 = 'Undefined'
+                WHERE AddressID IN ({ids})");
         }
 
         [Benchmark]
-        public void OrmLite_MSSQL_Update()
+        public void SqlSugar_ORM()
         {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+
+            var ids = string.Join(",", _targetIds);
+            _sqlSugarClient.Ado.ExecuteCommand($@"
+                UPDATE Person.Address
+                SET AddressLine2 = 'Undefined'
+                WHERE AddressID IN ({ids})");
+        }
+
+
+
+        [Benchmark]
+        public void OrmLite_ORM()
+        {
+            
             using var db = CreateOrmLiteMssqlConnection();
-            db.Update<Address>(
-                new { AddressLine2 = "Undefined" },
-                x => Sql.In(x.AddressId, _targetIds));
+            var ids = string.Join(",", _targetIds);
+            db.ExecuteSql($@"
+                UPDATE Person.Address
+                SET AddressLine2 = 'Undefined'
+                WHERE AddressID IN ({ids})");
+        }
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+            var ids = string.Join(",", _targetIds);
+            _freeSqlMssql.Ado.ExecuteNonQuery($@"
+                UPDATE Person.Address
+                SET AddressLine2 = 'Undefined'
+                WHERE AddressID IN ({ids})");
+        }
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+
+            using var ctx = CreateMssqlContext();
+
+            var ids = string.Join(",", _targetIds);
+            var sql = $@"
+                UPDATE Person.Address
+                SET AddressLine2 = 'Undefined'
+                WHERE AddressID IN ({ids})";
+
+            ctx.Database.ExecuteSqlRaw(sql);
         }
 
-        [Benchmark]
-        public void SqlSugar_MSSQL_Update()
-        {
-            _sqlSugarClient.Updateable<Address>()
-                .SetColumns(a => new Address { AddressLine2 = "Undefined" })
-                .Where(a => _targetIds.Contains(a.AddressId))
-                .ExecuteCommand();
-        }
     }
 }

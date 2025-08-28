@@ -14,21 +14,23 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class SelectProductInfoBenchmarkPostgresql : OrmBenchmarkBase
     {
-        [GlobalSetup(Target = nameof(RepoDb_Postgres))] 
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
+        [GlobalSetup(Target = nameof(RepoDb_ORM))]
         public void SetupRepoDb()
         {
             RepoDbSchemaConfigurator.Init();
         }
 
-        [GlobalSetup(Target = nameof(OrmLite_Postgres_LinqStyle))]
+        [GlobalSetup(Target = nameof(OrmLite_ORM))]
         public void SetupOrmLite()
         {
-            OrmLiteSchemaConfigurator.ConfigureMappings(); 
+            OrmLiteSchemaConfigurator.ConfigureMappings();
         }
 
         private IFreeSql _freeSqlPostgres;
 
-        [GlobalSetup(Target = nameof(FreeSql_Postgres))]
+        [GlobalSetup(Target = nameof(FreeSql_ORM))]
         public void SetupFreeSqlPostgres()
         {
             _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
@@ -37,27 +39,11 @@ namespace OrmBenchmarkThesis.Benchmarks
                 .Build();
         }
 
-        [Benchmark]
-        public List<ProductInfoDto> FreeSql_Postgres()
-        {
-            return _freeSqlPostgres.Ado.Query<ProductInfoDto>(@"
-                SELECT 
-                    p.name AS ProductName,
-                    pc.name AS Category,
-                    psc.name AS Subcategory,
-                    CONCAT(COALESCE(wu.name, ''), '/', COALESCE(su.name, '')) AS Units
-                FROM production.product p
-                JOIN production.productsubcategory psc ON p.productsubcategoryid = psc.productsubcategoryid
-                JOIN production.productcategory pc ON psc.productcategoryid = pc.productcategoryid
-                LEFT JOIN production.unitmeasure wu ON p.weightunitmeasurecode = wu.unitmeasurecode
-                LEFT JOIN production.unitmeasure su ON p.sizeunitmeasurecode = su.unitmeasurecode
-            ").ToList();
-        }
 
 
         private SqlSugarClient _sqlSugarClient;
 
-        [GlobalSetup(Target = nameof(SqlSugar_Postgres))]
+        [GlobalSetup(Target = nameof(SqlSugar_ORM))]
         public void SetupSqlSugar()
         {
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
@@ -70,57 +56,11 @@ namespace OrmBenchmarkThesis.Benchmarks
             SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
         }
 
-        [Benchmark]
-        public List<ProductInfoDto> SqlSugar_Postgres()
-        {
-            var list = _sqlSugarClient.Queryable<Product>()
-                .LeftJoin<ProductSubcategory>((p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
-                .LeftJoin<ProductCategory>((p, psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
-                .LeftJoin<UnitMeasure>((p, psc, pc, wu) => p.WeightUnitMeasureCode == wu.UnitMeasureCode)
-                .LeftJoin<UnitMeasure>((p, psc, pc, wu, su) => p.SizeUnitMeasureCode == su.UnitMeasureCode)
-                .Select((p, psc, pc, wu, su) => new ProductInfoDto
-                {
-                    ProductName = p.Name,
-                    Category = pc.Name,
-                    Subcategory = psc.Name,
-                    Units = (wu.Name ?? "") + "/" + (su.Name ?? "")
-                })
-                .ToList();
 
-            return list;
-        }
 
 
         [Benchmark]
-        public List<ProductInfoDto> EFCore_Postgres()
-        {
-            using var context = CreatePostgresContext();
-
-            return context.Products
-                .Include(p => p.ProductSubcategory)
-                    .ThenInclude(psc => psc.ProductCategory)
-                .Include(p => p.WeightUnitMeasureCodeNavigation)
-                .Include(p => p.SizeUnitMeasureCodeNavigation)
-                .Select(p => new ProductInfoDto
-                {
-                    ProductName = p.Name,
-                    Category = p.ProductSubcategory != null && p.ProductSubcategory.ProductCategory != null
-                        ? p.ProductSubcategory.ProductCategory.Name
-                        : string.Empty,
-                    Subcategory = p.ProductSubcategory != null
-                        ? p.ProductSubcategory.Name
-                        : string.Empty,
-                    Units = (p.WeightUnitMeasureCodeNavigation != null
-                        ? p.WeightUnitMeasureCodeNavigation.Name
-                        : "") + "/" + (p.SizeUnitMeasureCodeNavigation != null
-                        ? p.SizeUnitMeasureCodeNavigation.Name
-                        : "")
-                })
-                .ToList();
-        }
-
-        [Benchmark]
-        public List<ProductInfoDto> Dapper_Postgres()
+        public List<ProductInfoDto> Dapper_ORM()
         {
             using var conn = CreatePostgresConnection();
             return conn.Query<ProductInfoDto>(
@@ -139,7 +79,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public List<ProductInfoDto> RepoDb_Postgres()
+        public List<ProductInfoDto> RepoDb_ORM()
         {
             using var conn = CreatePostgresConnection();
             return conn.ExecuteQuery<ProductInfoDto>(
@@ -158,23 +98,90 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public List<ProductInfoDto> OrmLite_Postgres_LinqStyle()
+        public List<ProductInfoDto> SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
+            var sql = @"
+                SELECT 
+                    p.name AS ProductName,
+                    pc.name AS Category,
+                    psc.name AS Subcategory,
+                    CONCAT(COALESCE(wu.name, ''), '/', COALESCE(su.name, '')) AS Units
+                FROM production.product p
+                JOIN production.productsubcategory psc ON p.productsubcategoryid = psc.productsubcategoryid
+                JOIN production.productcategory pc ON psc.productcategoryid = pc.productcategoryid
+                LEFT JOIN production.unitmeasure wu ON p.weightunitmeasurecode = wu.unitmeasurecode
+                LEFT JOIN production.unitmeasure su ON p.sizeunitmeasurecode = su.unitmeasurecode";
+            return _sqlSugarClient.Ado.SqlQuery<ProductInfoDto>(sql);
+        }
+        [Benchmark]
+        public List<ProductInfoDto> OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
 
-            var q = db.From<Product>()
-                .Join<Product, ProductSubcategory>((p, psc) => p.ProductSubcategoryId == psc.ProductSubcategoryId)
-                .Join<ProductSubcategory, ProductCategory>((psc, pc) => psc.ProductCategoryId == pc.ProductCategoryId)
-                .LeftJoin<Product, UnitMeasure>((p, wu) => p.WeightUnitMeasureCode == wu.UnitMeasureCode, db.TableAlias("wu"))
-                .LeftJoin<Product, UnitMeasure>((p, su) => p.SizeUnitMeasureCode == su.UnitMeasureCode, db.TableAlias("su"))
-                .Select(@"
-                    production.product.name,
-                    production.productcategory.name,
-                    production.productsubcategory.name,
-                    CONCAT(COALESCE(wu.name, ''), '/', COALESCE(su.name, ''))");
+            var sql = @"
+                SELECT 
+                    p.name AS ProductName,
+                    pc.name AS Category,
+                    psc.name AS Subcategory,
+                    CONCAT(COALESCE(wu.name, ''), '/', COALESCE(su.name, '')) AS Units
+                FROM production.product p
+                JOIN production.productsubcategory psc ON p.productsubcategoryid = psc.productsubcategoryid
+                JOIN production.productcategory pc ON psc.productcategoryid = pc.productcategoryid
+                LEFT JOIN production.unitmeasure wu ON p.weightunitmeasurecode = wu.unitmeasurecode
+                LEFT JOIN production.unitmeasure su ON p.sizeunitmeasurecode = su.unitmeasurecode";
 
-            return db.Select<ProductInfoDto>(q);
+            return db.SqlList<ProductInfoDto>(sql);
+        }
+        [Benchmark]
+        public List<ProductInfoDto> FreeSql_ORM()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+            return _freeSqlPostgres.Ado.Query<ProductInfoDto>(@"
+                SELECT 
+                    p.name AS ProductName,
+                    pc.name AS Category,
+                    psc.name AS Subcategory,
+                    CONCAT(COALESCE(wu.name, ''), '/', COALESCE(su.name, '')) AS Units
+                FROM production.product p
+                JOIN production.productsubcategory psc ON p.productsubcategoryid = psc.productsubcategoryid
+                JOIN production.productcategory pc ON psc.productcategoryid = pc.productcategoryid
+                LEFT JOIN production.unitmeasure wu ON p.weightunitmeasurecode = wu.unitmeasurecode
+                LEFT JOIN production.unitmeasure su ON p.sizeunitmeasurecode = su.unitmeasurecode
+            ").ToList();
+        }
+        [Benchmark]
+        public List<ProductInfoDto> EFCore_ORM()
+        {
+            using var context = CreatePostgresContext();
+
+            return (from p in context.Products
+                    join sub in context.ProductSubcategories on p.ProductSubcategoryId equals sub.ProductSubcategoryId
+                    join cat in context.ProductCategories on sub.ProductCategoryId equals cat.ProductCategoryId
+                    join wu in context.UnitMeasures on p.WeightUnitMeasureCode equals wu.UnitMeasureCode into wuJoin
+                    from wu in wuJoin.DefaultIfEmpty()
+                    join su in context.UnitMeasures on p.SizeUnitMeasureCode equals su.UnitMeasureCode into suJoin
+                    from su in suJoin.DefaultIfEmpty()
+                    select new ProductInfoDto
+                    {
+                        ProductName = p.Name,
+                        Category = cat.Name,
+                        Subcategory = sub.Name,
+                        Units = (wu.Name ?? "") + "/" + (su.Name ?? "")
+                    }).ToList();
         }
     }
-
 }

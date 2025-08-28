@@ -85,7 +85,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         [IterationCleanup]
         public void IterationCleanup()
         {
-            // IterationSetup czyści dane na starcie – tu nie trzeba nic robić.
+            
         }
 
         [GlobalCleanup]

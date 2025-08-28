@@ -13,9 +13,7 @@ namespace OrmBenchmarkMag.Config
 {
     public class ThesisBenchmarkConfig : ManualConfig
     {
-        //i ważna uwaga - do pracy nawet - Raw sql w ORMach używamy w ostatecznosci. my testujemy tutaj realne produkcyjne użycie, wiec testujemy wbudowane domyslne funkcjonalnosci
-        //ormów tak jakby ktos pisal realna aplikacje. Nie ma sensu inaczej - bo wtedy dla kazdego ORMA byśmy stosowali Raw sql ktory jest najszybszy. a tak to tylko dapper
-        //bedzie uzywal Raw sql bo wlasnie tak on dziala domyslnie
+
         public ThesisBenchmarkConfig()
         {
             this.HideColumns(Column.Gen0, Column.Gen1, Column.Gen2);
@@ -30,15 +28,20 @@ namespace OrmBenchmarkMag.Config
                 //.WithInvocationCount(1000)
                 //dla bardziej wymagajacych queries, ponad 1k, do 120k
                 //dla insertow tutaj musi byc 1, bo czyscimy tabelę przed kazdym iteration (nie da sie przed invocation)
-                .WithInvocationCount(1) 
+                .WithInvocationCount(50) 
                 //unrollfactor musi dzielic invocationcount
-                .WithUnrollFactor(1)
+                .WithUnrollFactor(10)
                 .WithToolchain(InProcessNoEmitToolchain.Instance));
 
             AddDiagnoser(MemoryDiagnoser.Default);
 
+
+            //time in ms
+            SummaryStyle = BenchmarkDotNet.Reports.SummaryStyle.Default.WithTimeUnit(Perfolizer.Horology.TimeUnit.Millisecond);
+
             AddExporter(CsvExporter.Default);
-            WithOrderer(new DefaultOrderer(SummaryOrderPolicy.FastestToSlowest));
+            //WithOrderer(new DefaultOrderer(SummaryOrderPolicy.FastestToSlowest));
+
 
             Options |= ConfigOptions.DisableOptimizationsValidator;
         }

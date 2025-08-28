@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FreeSql;
 using OrmBenchmarkMag.Benchmarks;
+using RepoDb.Enumerations;
 
 namespace OrmBenchmarkThesis.Benchmarks
 {
@@ -17,10 +18,22 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class UpdateAddressBenchmarkPostgres : OrmBenchmarkBase
     {
-        private SqlSugarClient _sqlSugarClient;
+        [Params("PostgreSQL")]
+        public string DatabaseEngine { get; set; }
+        private List<int> _targetIds;
+
         private IFreeSql _freeSqlPostgres;
 
-        private List<int> _targetIds;
+        [GlobalSetup(Target = nameof(FreeSql))]
+        public void SetupFreeSql()
+        {
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+        }
 
         [GlobalSetup]
         public void GlobalSetup()
@@ -36,28 +49,13 @@ namespace OrmBenchmarkThesis.Benchmarks
                 // Already mapped
             }
 
-            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
-            {
-                ConnectionString = PostgresConnectionString,
-                DbType = DbType.PostgreSQL,
-                IsAutoCloseConnection = true,
-                InitKeyType = InitKeyType.Attribute
-            });
-            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(_sqlSugarClient);
             OrmLiteSchemaConfigurator.ConfigureMappings();
-
-            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
-                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
-                .UseAutoSyncStructure(false)
-                .Build();
-
-            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
 
             _targetIds = conn.Query<int>(
                 @"SELECT addressid
                   FROM person.address
                   WHERE addressline2 IS NULL
-                  LIMIT 10").ToList();
+                  LIMIT 1000").ToList();
         }
 
         [IterationSetup]
@@ -81,35 +79,7 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public void FreeSql_Postgres_Update()
-        {
-            _freeSqlPostgres.Update<Address>()
-                .AsTable("person.address")
-                .Set(a => a.AddressLine2, "Undefined")
-                .Where(a => _targetIds.Contains(a.AddressId))
-                .ExecuteAffrows();
-        }
-
-        [Benchmark]
-        public void RepoDb_Postgres_Update()
-        {
-            using var conn = CreatePostgresConnection();
-
-            var addresses = RepoDb.DbConnectionExtension.Query<Address>(
-                conn,
-                "person.address",
-                where: new RepoDb.QueryField("addressid", RepoDb.Enumerations.Operation.In, _targetIds)).ToList();
-
-            foreach (var address in addresses)
-            {
-                address.AddressLine2 = "Undefined";
-            }
-
-            RepoDb.DbConnectionExtension.UpdateAll(conn, addresses);
-        }
-
-        [Benchmark]
-        public void Dapper_Postgres_Update()
+        public void Dapper_ORM()
         {
             using var conn = CreatePostgresConnection();
             conn.Execute(
@@ -119,31 +89,86 @@ namespace OrmBenchmarkThesis.Benchmarks
         }
 
         [Benchmark]
-        public void EFCore_Postgres_Update()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreatePostgresContext();
-            ctx.Addresses
-               .Where(a => _targetIds.Contains(a.AddressId))
-               .ExecuteUpdate(s => s
-                   .SetProperty(a => a.AddressLine2, "Undefined"));
+            using var conn = CreatePostgresConnection();
+
+            var ids = string.Join(",", _targetIds);
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn, $@"
+                UPDATE person.address
+                SET addressline2 = 'Undefined'
+                WHERE addressid IN ({ids})");
         }
 
         [Benchmark]
-        public void OrmLite_Postgres_Update()
+        public void SqlSugar_ORM()
+        {
+            using var db = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = PostgresConnectionString,
+                DbType = DbType.PostgreSQL,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+
+            SqlSugarSchemaConfigurator.ConfigureMappingsPostgres(db);
+            var ids = string.Join(",", _targetIds);
+            var sql = $@"
+                UPDATE person.address
+                SET addressline2 = 'Undefined'
+                WHERE addressid IN ({ids})";
+
+            db.Ado.ExecuteCommand(sql);
+        }
+
+        [Benchmark]
+        public void OrmLite_ORM()
         {
             using var db = CreateOrmLitePostgresConnection();
-            db.Update<Address>(
-                new { AddressLine2 = "Undefined" },
-                x => Sql.In(x.AddressId, _targetIds));
+
+            var ids = string.Join(",", _targetIds);
+            var sql = $@"
+                UPDATE person.address
+                SET addressline2 = 'Undefined'
+                WHERE addressid IN ({ids})";
+
+            db.ExecuteSql(sql);
         }
 
         [Benchmark]
-        public void SqlSugar_Postgres_Update()
+        public void FreeSql_ORM()
         {
-            _sqlSugarClient.Updateable<Address>()
-                .SetColumns(a => new Address { AddressLine2 = "Undefined" })
+            _freeSqlPostgres = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.PostgreSQL, PostgresConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+
+
+            FreeSqlSchemaConfigurator.ConfigureMappingsPostgres(_freeSqlPostgres);
+
+            _freeSqlPostgres.Update<Address>()
+                .AsTable("person.address")
+                .Set(a => a.AddressLine2, "Undefined")
                 .Where(a => _targetIds.Contains(a.AddressId))
-                .ExecuteCommand();
+                .ExecuteAffrows();
         }
+
+
+
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+            using var ctx = CreatePostgresContext();
+
+            var ids = string.Join(",", _targetIds);
+            var sql = $@"
+                UPDATE person.address
+                SET addressline2 = 'Undefined'
+                WHERE addressid IN ({ids})";
+
+            ctx.Database.ExecuteSqlRaw(sql);
+        }
+
+
     }
 }

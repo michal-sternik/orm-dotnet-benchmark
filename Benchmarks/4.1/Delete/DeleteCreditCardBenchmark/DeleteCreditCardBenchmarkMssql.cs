@@ -17,6 +17,8 @@ namespace OrmBenchmarkThesis.Benchmarks
     [MemoryDiagnoser]
     public class DeleteCreditCardBenchmarkMssql : OrmBenchmarkBase
     {
+        [Params("Microsoft SQL Server")]
+        public string DatabaseEngine { get; set; }
         private SqlSugarClient _sqlSugarClient;
         private IFreeSql _freeSqlMssql;
         private List<CreditCard> _targetCards;
@@ -25,10 +27,9 @@ namespace OrmBenchmarkThesis.Benchmarks
         public void GlobalSetup()
         {
             using var conn = CreateMssqlConnection();
-            conn.Open(); // WAŻNE - trzymamy połączenie
+            conn.Open();
 
-            try { FluentMapper.Entity<CreditCard>().Table("Sales.CreditCard"); }
-            catch { }
+            try { FluentMapper.Entity<CreditCard>().Table("Sales.CreditCard"); } catch { }
 
             _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
             {
@@ -77,7 +78,6 @@ namespace OrmBenchmarkThesis.Benchmarks
             conn.Execute(@"ALTER TABLE Sales.SalesOrderHeader NOCHECK CONSTRAINT FK_SalesOrderHeader_CreditCard_CreditCardID;");
             conn.Execute(@"ALTER TABLE Sales.PersonCreditCard NOCHECK CONSTRAINT FK_PersonCreditCard_CreditCard_CreditCardID;");
 
-            // Usuwasz stare dane, nawet jeśli nie było cleanupu
             conn.Execute(@"DELETE FROM Sales.CreditCard WHERE CreditCardId IN @Ids",
                 new { Ids = _targetCards.Select(c => c.CreditCardId).ToList() });
 
@@ -87,7 +87,7 @@ namespace OrmBenchmarkThesis.Benchmarks
             {
                 conn.Execute(
                     @"INSERT INTO Sales.CreditCard (CreditCardId, CardType, CardNumber, ExpMonth, ExpYear, ModifiedDate)
-              VALUES (@CreditCardId, @CardType, @CardNumber, @ExpMonth, @ExpYear, @ModifiedDate)", card);
+                      VALUES (@CreditCardId, @CardType, @CardNumber, @ExpMonth, @ExpYear, @ModifiedDate)", card);
             }
 
             conn.Execute(@"SET IDENTITY_INSERT Sales.CreditCard OFF;");
@@ -96,59 +96,66 @@ namespace OrmBenchmarkThesis.Benchmarks
         [IterationCleanup]
         public void IterationCleanup()
         {
-            // Możesz to całkowicie usunąć lub zostawić puste.
+            // intentionally empty
         }
 
 
         [Benchmark]
-        public void FreeSql_MSSQL_Delete()
-        {
-            _freeSqlMssql.Delete<CreditCard>()
-                .Where(c => _targetCards.Select(x => x.CreditCardId).Contains(c.CreditCardId))
-                .ExecuteAffrows();
-        }
-
-        [Benchmark]
-        public void RepoDb_MSSQL_Delete()
-        {
-            using var conn = CreateMssqlConnection();
-            RepoDb.DbConnectionExtension.DeleteAll<CreditCard>(conn, _targetCards);
-        }
-
-        [Benchmark]
-        public void Dapper_MSSQL_Delete()
+        public void Dapper_ORM()
         {
             using var conn = CreateMssqlConnection();
             conn.Execute(@"DELETE FROM Sales.CreditCard WHERE CreditCardId IN @Ids",
                 new { Ids = _targetCards.Select(c => c.CreditCardId).ToList() });
         }
-
         [Benchmark]
-        public void EFCore_MSSQL_Delete()
+        public void RepoDb_ORM()
         {
-            using var ctx = CreateMssqlContext();
-            var cards = ctx.CreditCards
-                .Where(c => _targetCards.Select(x => x.CreditCardId).Contains(c.CreditCardId))
-                .ToList();
-
-            ctx.CreditCards.RemoveRange(cards);
-            ctx.SaveChanges();
+            using var conn = CreateMssqlConnection();
+            var idsCsv = string.Join(",", _targetCards.Select(a => a.CreditCardId));
+            RepoDb.DbConnectionExtension.ExecuteNonQuery(conn, $@"DELETE FROM Sales.CreditCard WHERE CreditCardId IN ({idsCsv})");
         }
 
         [Benchmark]
-        public void OrmLite_MSSQL_Delete()
+        public void SqlSugar_ORM()
+        {
+            _sqlSugarClient = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = MssqlConnectionString,
+                DbType = DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+            SqlSugarSchemaConfigurator.ConfigureMappingsMssql(_sqlSugarClient);
+            var idsCsv = string.Join(",", _targetCards.Select(a => a.CreditCardId));
+            _sqlSugarClient.Ado.ExecuteCommand($@"DELETE FROM Sales.CreditCard WHERE CreditCardId IN ({idsCsv})");
+        }
+
+
+
+        [Benchmark]
+        public void OrmLite_ORM()
         {
             using var db = CreateOrmLiteMssqlConnection();
-            ServiceStack.OrmLite.OrmLiteWriteExpressionsApi.Delete<CreditCard>(db, c => Sql.In(c.CreditCardId, _targetCards.Select(x => x.CreditCardId).ToList()));
+            var ids = _targetCards.Select(a => a.CreditCardId).ToList();
+            db.ExecuteSql($"DELETE FROM Sales.CreditCard WHERE CreditCardId IN ({string.Join(",", ids)})");
+        }
+        [Benchmark]
+        public void FreeSql_ORM()
+        {
+            _freeSqlMssql = new FreeSql.FreeSqlBuilder()
+                .UseConnectionString(FreeSql.DataType.SqlServer, MssqlConnectionString)
+                .UseAutoSyncStructure(false)
+                .Build();
+            var idsCsv = string.Join(",", _targetCards.Select(a => a.CreditCardId));
+            _freeSqlMssql.Ado.ExecuteNonQuery($@"DELETE FROM Sales.CreditCard WHERE CreditCardId IN ({idsCsv})");
+        }
+        [Benchmark]
+        public void EFCore_ORM()
+        {
+            using var ctx = CreateMssqlContext();
+            var ids = _targetCards.Select(a => a.CreditCardId).ToList();
+            ctx.Database.ExecuteSqlRaw($"DELETE FROM Sales.CreditCard WHERE CreditCardId IN ({string.Join(",", ids)})");
         }
 
-        [Benchmark]
-        public void SqlSugar_MSSQL_Delete()
-        {
-            _sqlSugarClient.Deleteable<CreditCard>()
-                .Where(c => _targetCards.Select(x => x.CreditCardId).Contains(c.CreditCardId))
-                .ExecuteCommand();
-        }
     }
 }
-
